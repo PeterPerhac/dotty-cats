@@ -27,27 +27,32 @@ object ApplyCats extends Matchers {
     Apply[Option].ap(None)(None) should be(None)
 
     val option2 = Option(1) |@| Option(2)
-    val option3 = option2 |@| Option.empty[Int]
+    val option3 = option2 |@| Option(3)
+    val option4 = option3 |@| Option.empty[Int]
 
     val addArity2 = (a: Int, b: Int) ⇒ a + b
     Apply[Option].ap2(Some(addArity2))(Some(1), Some(2)) should be(Some(3))
     Apply[Option].ap2(Some(addArity2))(Some(1), None) should be(None)
 
     val addArity3 = (a: Int, b: Int, c: Int) ⇒ a + b + c
+    val addArity4 = (a: Int, b: Int, c: Int, d: Int) ⇒ a + b + c + d
     Apply[Option].ap3(Some(addArity3))(Some(1), Some(2), Some(3)) should be(Some(6))
 
     option2 map addArity2 should be(Some(3))
-    option3 map addArity3 should be(None)
+    option3 map addArity3 should be(Some(6))
+    option4 map addArity4 should be(None)
 
     option2 apWith Some(addArity2) should be(Some(3))
-    option3 apWith Some(addArity3) should be(None)
+    option3 apWith Some(addArity3) should be(Some(6))
 
     option2.tupled should be(Some((1, 2)))
-    option3.tupled should be(None)
+    option3.tupled should be(Some(1, 2, 3))
+    option4.tupled should be(None)
 
-    val binary = (a: Int, b: Int) ⇒  a + b
+    val binary = (a: Int, b: Int) ⇒ a + b
     Apply[Option].ap2(Some(binary))(Some(1), Some(2)) should be(Some(3))
     Apply[Option].map2(Some(1), Some(2))(binary) should be(Some(3))
+    Apply[Option].map3(Some(1), Some(2), Some(3))(addArity3) should be(Some(6))
 
   }
 

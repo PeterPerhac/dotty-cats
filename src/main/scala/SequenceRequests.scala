@@ -7,39 +7,33 @@ object SequenceRequests {
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  def goodPlaceToLookForIt(foo: String): Future[Option[String]] = Future {
-    println("yes, you'll find what you're looking for here!")
-    Thread.sleep(1000)
-    Option(s"here it is: $foo ! enjoy!")
+  private class ServiceCall[-A,+R](f:(A)=>Future[Option[R]], name:String = "") extends Function1[A, Future[Option[R]]] {
+    override def apply(arg: A): Future[Option[R]] = f(arg)
+    override def toString() = s"Call to service $name"
   }
 
-  def fromS4L(foo: String): Future[Option[String]] = Future {
-    println("calling s4l")
-    Thread.sleep(1000)
-    // Future(Option(s"Save 4 Later found: $foo"))
-    None
+  private object ServiceCall{
+    def apply(f: (String)=> Future[Option[String]], name:String = "") = new ServiceCall(f, name)
   }
 
-  def fromBackend(foo: String): Future[Option[String]] =  Future {
-    println("calling backend")
-    Thread.sleep(1000)
-    // Future(Option(s"Backend found: $foo"))
-    None
-  }
+  def specialPlace(foo: String): Future[Option[String]] = Future ( Some(s"You found $foo!") )
 
-  def fromSomeOtherPlace(foo: String): Future[Option[String]] = Future {
-    println("calling another dimension")
-    Thread.sleep(1000)
-    // Future(Option(s"$foo was found in another dimension"))
-    None
-  }
-
-  def noNotHere(foo: String): Future[Option[String]] = Future {
-    println("doing nothing, you won't find me here")
+  def placeOne(foo: String): Future[Option[String]] = Future {
+    println("calling one place")
     Thread.sleep(1000)
     None
   }
 
+  def placeTwo(foo: String): Future[Option[String]] =  Future {
+    println("calling another")
+    Thread.sleep(1000)
+    None
+  }
+
+  val notHere: (String) => Future[Option[String]] = _ => {
+    println("nope")
+    Future.successful(None)
+  }
 
   def returnFirstSuccess[A,R](funs: List[(A)=>Future[Option[R]]], arg: A): Future[Option[R]] = funs match {
     case Nil => Future.successful(None)
@@ -50,15 +44,22 @@ object SequenceRequests {
   }
 
   def main(args: Array[String]): Unit = {
-    val arg = "found me!"
-    val functions = List.fill(10)(List(noNotHere _, fromS4L _, fromBackend _, fromSomeOtherPlace _)).flatten.updated(20, goodPlaceToLookForIt _)
+    val arg = "everlasting glory and fame"
+    val fus = List.fill(5)(List( ServiceCall( placeOne _) ,ServiceCall( placeTwo _), ServiceCall(notHere))).flatten
+    val functions = fus.updated(7, ServiceCall( specialPlace _, name="Happy"))
+
     println("I will search in this many places:")
     functions foreach println
+    println
+    println("====")
+    println
+
     val busy = new AtomicBoolean(true)
     returnFirstSuccess(functions, arg) foreach { os  =>
       println(os.getOrElse("The search was futile."))
       busy.compareAndSet(true, false)
     }
+
     while (busy.get()) {
       Thread.sleep(300)
     }

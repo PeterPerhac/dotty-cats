@@ -14,16 +14,22 @@ object TreeFunctor {
 
 
   def main(args: Array[String]): Unit = {
+
     implicit val treeFunctor = new Functor[Tree] {
       override def map[A, B](fa: Tree[A])(f: (A) => B): Tree[B] = fa match {
         case Branch(l, r) => Branch(map(l)(f), map(r)(f))
         case Leaf(value) => Leaf(f(value))
       }
     }
-    val aTree: Tree[Int] = Branch(Leaf(1), Branch(Leaf(2), Leaf(3)))
+
+    def branch[A](left: Tree[A], right: Tree[A]): Tree[A] = Branch(left, right)
+
+    def leaf[A](value: A): Tree[A] = Leaf(value)
+
     import cats.syntax.functor._
-    val bTree: Tree[String] = aTree.map(i => s"--$i--")
-    println(bTree)
+
+    println(branch(leaf(1), branch(leaf(2), leaf(3))).map(i => s"---$i---"))
   }
+
 
 }

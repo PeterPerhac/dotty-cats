@@ -39,6 +39,14 @@ object StateMonadPostOrderCalculator {
   def main(args: Array[String]): Unit = {
     val program = evalAll(List("1", "2", "+", "3", "*"))
     println(program.runA(Nil).value)
+
+    val program2 = for {
+      _ <- evalAll(List("1", "2", "+"))
+      _ <- evalAll(List("3", "4", "+"))
+      ans <- evalOne("-")
+    } yield ans
+
+    println(program2.runA(Nil).value)
   }
 
 }

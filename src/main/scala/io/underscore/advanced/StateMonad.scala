@@ -4,19 +4,30 @@ import cats.data.State
 
 object StateMonad {
 
-  def main(args: Array[String]): Unit = {
-    import State._
+  case class Something(a: String, b: String, c: String)
 
-    val program: State[Int, (Int, Int, Int)] = for {
-      a <- get[Int]
-      _ <- set[Int](a + 1)
-      b <- get[Int]
-      _ <- modify[Int](_ + 1)
-      c <- inspect[Int, Int](_ * 1000)
-    } yield (a, b, c)
-    val (state, result) = program.run(1).value
-    println(state)
-    println(result)
+  def getA(id: Int): Option[String] = if (id % 2 == 0) Some("A") else None
+
+  def getB(id: Int): Option[String] = if (id % 2 == 1) Some("B") else None
+
+  def getC(id: Int): Option[String] = if (id % 2 == 0) Some("C") else None
+
+
+  def main(args: Array[String]): Unit = {
+
+    val something = Something("Aaa", "Bbb", "Ccc")
+    val variant = 1
+
+    def update(potentiallyFresherValue: Option[String]) = State.modify[Something](s => s.copy(a=s.a+"_", b=s.b+"!",c=s.c+":" ))
+
+    val program = for {
+      _ <- update(getA(variant))
+      _ <- update(getB(variant))
+      res <- update(getC(variant))
+    } yield res
+
+    println(program.run(something).value)
+
   }
 
 }

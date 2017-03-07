@@ -10,7 +10,7 @@ object ParallelVsSerialExecution {
 
   private def printer: (List[String]) => Unit = _.foreach(println)
 
-  private def tuplePrinter: (String, String, String) => Unit = {
+  private def argumentPrinter: (String, String, String) => Unit = {
     case res@_ => res.productIterator.foreach(println)
   }
 
@@ -47,7 +47,7 @@ object ParallelVsSerialExecution {
   def parallelFuturesWithCartesians(): Future[Unit] = {
     import cats.instances.future._
     import cats.syntax.cartesian._
-    findFruit("apple") |@| findFruit("banana") |@| findFruit("cherry") map tuplePrinter
+    findFruit("apple") |@| findFruit("banana") |@| findFruit("cherry") map argumentPrinter
   }
 
   def main(args: Array[String]): Unit = {

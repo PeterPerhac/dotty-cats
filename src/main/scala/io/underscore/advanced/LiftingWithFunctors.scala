@@ -9,15 +9,14 @@ object LiftingWithFunctors {
     val func = (x: Int) => s"___${x}___"
     val lifted = Functor[Option].lift(func)
     println(lifted(Option(1)))
-    foo
+    foo()
   }
 
-
-  def foo = {
+  def foo() = {
     import cats.instances.function._
     import cats.syntax.functor._
-    val f1 = (x:Int) => x * 2
-    val f2 = (x:Int) => x * x
+    val f1 = (x: Int) => x * 2
+    val f2 = (x: Int) => x * x
     println(f1.map(f2)(10))
   }
 

@@ -9,8 +9,12 @@ case object White extends Colour { val hex = "#ffffff" }
 case object Black extends Colour { val hex = "#000000" }
 
 object Colour {
+
+  import js.syntax._
+
   implicit object ColourFormatter extends Format[Colour] {
-    override def writes(o: Colour): JsValue = JsObject(Map("hex" -> JsString(o.hex)))
+    override def writes(o: Colour): JsValue = "hex" -> JsString(o.hex)
+
     override def reads(json: JsValue): JsResult[Colour] = (json \ "hex").as[String] match {
       case Black.hex => JsSuccess(Black)
       case White.hex => JsSuccess(White)
@@ -46,20 +50,22 @@ object Pet {
 object JsonFormatForADT {
 
   implicit class PetPrinter(pet: Pet) {
-    def print(implicit w: Writes[Pet]): Unit = println(w.writes(pet).toString())
+    def printJson(implicit w: Writes[Pet]): Unit = println(w.writes(pet).toString())
   }
 
   def main(args: Array[String]): Unit = {
 
-    Cat("minnie").print
-    Cat("mixie", age = Some(10)).print
-    Dog("waldo", colour = Brown).print
+    Cat("minnie").printJson
+    Cat("mixie", age = Some(10)).printJson
+    Dog("waldo", colour = Brown).printJson
+    Dog("azor", colour = Yellow, age = Some(2)).printJson
 
     val cat1 = Json.parse("""{"name":"minnie","type":"cat"}""").as[Pet]
     val cat2 = Json.parse("""{"name":"mixie","age":10,"type":"cat"}""").as[Pet]
-    val dog = Json.parse("""{"name":"waldo","colour":{"hex":"#8B4513"},"type":"dog"}""").as[Pet]
+    val dog1 = Json.parse("""{"name":"waldo","colour":{"hex":"#8B4513"},"type":"dog"}""").as[Pet]
+    val dog2 = Json.parse("""{"name":"azor","age":2,"colour":{"hex":"#ffff00"},"type":"dog"}""").as[Pet]
 
-    Seq(cat1, cat2, dog).foreach(println)
+    Seq(cat1, cat2, dog1, dog2).foreach(println)
 
   }
 

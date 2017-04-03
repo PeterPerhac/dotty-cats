@@ -13,7 +13,7 @@ object FoldableCats extends Matchers {
     def parseInt(s: String): Option[Int] =
       Either.catchOnly[NumberFormatException](s.toInt).toOption
 
-    Foldable[List].traverse_(List("1", "2", "3"))(parseInt) should be(Some())
+    Foldable[List].traverse_(List("1", "2", "3"))(parseInt) should be(Some)
     Foldable[List].traverse_(List("a", "b", "c"))(parseInt) should be(None)
 
   }

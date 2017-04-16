@@ -1,42 +1,40 @@
 package io.underscore.advanced
 
-import cats.data.{NonEmptyVector, Validated}
+import cats.data.{NonEmptyList, Validated}
 
 final case class ValidationError(message: String, arguments: Any*)
 
-final case class Pet(name: String, age: Option[Int] = None)
+final case class Cat(name: String, age: Option[Int] = None)
 
 
 object ValidatedStuff {
 
-  import cats.instances.option._
-  import cats.syntax.applicative._
   import cats.syntax.cartesian._
   import cats.syntax.validated._
 
-  type Checked[T] = Validated[NonEmptyVector[ValidationError], T]
+  type V[T] = Validated[ValidationError, T]
 
-  def checkName(pet: Pet): Checked[Pet] = pet.name match {
-    case null => ValidationError("Pet's name can't be null", pet).pure[NonEmptyVector].invalid[Pet]
-    case s: String if s.trim.isEmpty => ValidationError("blank pet's name").pure[NonEmptyVector].invalid[Pet]
-    case s: String if s.length == 1 => ValidationError("Pet's name can't be single character").pure[NonEmptyVector].invalid[Pet]
-    case _ => pet.valid
+  def checkName(name: String): V[String] = name match {
+    case s if Option(s).exists(_.trim.isEmpty) => ValidationError("Name must be provided", s).invalid
+    case s: String if s.length == 1 => ValidationError("Name can't be single character").invalid
+    case s => s.valid
   }
 
-  def checkAge(pet: Pet): Checked[Pet] = pet.age match {
-    case Some(age) if age < 0 || age > 50 => ValidationError("Pet's age must be >=0 and <=50", age).pure[NonEmptyVector].invalid[Pet]
-    case _ => pet.valid
+  def checkAge(age: Option[Int]): V[Option[Int]] = age match {
+    case Some(n) if n < 0 || n > 50 => ValidationError("Age must be >=0 and <=50", n).invalid
+    case n => age.valid
   }
 
   def main(args: Array[String]): Unit = {
 
-    val pet = Pet("x", age = 99.pure)
-    val pet2 = Pet("x", age = 20.pure)
-    val pet3 = Pet("foo", age = 20.pure)
+    val errorFormatter = (nel: NonEmptyList[ValidationError]) =>
+      s"an invalid cat ${nel.map(_.message).toList.mkString("(", ", ", ")")}"
 
-    (checkName(pet) |@| checkAge(pet)) map {case _@_=> pet} fold (println, println)
-    (checkName(pet2) |@| checkAge(pet2)) map {case _@_=> pet2} fold (println, println)
-    (checkName(pet3) |@| checkAge(pet3)) map {case _@_=> pet3} fold (println, println)
+    List("" -> Some(30), "x" -> Some(20), "Mitzi" -> Some(51), "x" -> Some(99), "" -> Some(99), "Mitzi" -> Some(20), "Mitzi" -> None).foreach {
+      case (n, a) =>
+        val cat = checkName(n).toValidatedNel |@| checkAge(a).toValidatedNel map Cat fold(errorFormatter, _ => "a valid cat")
+        println(s"Inputs $n and $a make $cat")
+    }
   }
 
 

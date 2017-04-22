@@ -2,6 +2,8 @@ package adts
 
 import play.api.libs.json._
 
+import scala.language.implicitConversions
+
 sealed trait Colour { val hex: String }
 case object Brown extends Colour { val hex = "#8B4513" }
 case object Yellow extends Colour { val hex = "#ffff00" }
@@ -10,7 +12,7 @@ case object Black extends Colour { val hex = "#000000" }
 
 object Colour {
 
-  import js.syntax._
+  implicit def pairToValue(pair : (String, JsString)): JsObject = JsObject(Seq(pair._1 -> pair._2))
 
   implicit object ColourFormatter extends Format[Colour] {
     override def writes(o: Colour): JsValue = "hex" -> JsString(o.hex)

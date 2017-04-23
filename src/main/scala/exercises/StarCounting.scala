@@ -63,7 +63,6 @@ object StarCounting {
 
   type StarCount = Int
 
-
   def main(args: Array[String]): Unit = {
     args.headOption.foreach {
       file =>

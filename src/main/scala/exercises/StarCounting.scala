@@ -1,7 +1,5 @@
 package exercises
 
-import cats.Show
-
 import scala.collection.mutable
 
 
@@ -25,18 +23,6 @@ object Row {
 final case class StarWithLocation(star: Star, row: Int, col: Int)
 
 
-object NightSky {
-
-  implicit val starShow = Show.show {
-    (ns: NightSky) =>
-      ns.rows.map(_.pixels.map {
-        case Darkness => "#"
-        case Star(id) => id.fold("-")(_.toString)
-      }.mkString).mkString("\n")
-  }
-
-}
-
 final case class NightSky(w: Int, h: Int, rows: Seq[Row]) {
 
   val allStars: Seq[StarWithLocation] =
@@ -54,7 +40,10 @@ final case class NightSky(w: Int, h: Int, rows: Seq[Row]) {
 
   def identifyStar(x: Int, y: Int, id: Int): Unit = starAt(x, y).foreach(_.id = Some(id))
 
-  override def toString: String = Show[NightSky] show this
+  override def toString: String = this.rows.map(_.pixels.map {
+    case Darkness => "#"
+    case Star(id) => id.fold("-")(_.toString)
+  }.mkString).mkString("\n")
 
 }
 
@@ -64,11 +53,10 @@ object StarCounting {
   type StarCount = Int
 
   def main(args: Array[String]): Unit = {
-    args.headOption.foreach {
-      file =>
-        readImages(scala.io.Source.fromFile(file).getLines.toList).map(solver).zipWithIndex.foreach {
-          case (starCount, index) => println(s"Case ${index + 1}: $starCount")
-        }
+    args.headOption.foreach { file =>
+      readImages(scala.io.Source.fromFile(file).getLines.toList).map(solver).zipWithIndex.foreach {
+        case (starCount, index) => println(s"Case ${index + 1}: $starCount")
+      }
     }
   }
 
@@ -131,13 +119,16 @@ object StarCounting {
     val unidentifiedStar: StarWithLocation => Boolean = _.star.id.isEmpty
     var newId = 1
 
-    while (nightSky.allStars.exists(unidentifiedStar)) {
-      nightSky.allStars.find(unidentifiedStar).foreach(swl =>
-        newId = floodFill(nightSky, swl.col, swl.row, newId))
+    var star: Option[StarWithLocation] = nightSky.allStars.find(unidentifiedStar)
+    while (star.isDefined) {
+      star.foreach { swl =>
+        newId = floodFill(nightSky, swl.col, swl.row, newId)
+        star = nightSky.allStars.find(unidentifiedStar)
+      }
     }
-    println(Show[NightSky] show nightSky)
-    println("...........................")
-    nightSky.allStars.flatMap(_.star.id).distinct.size
+//    println(nightSky.toString)
+//    println("...........................")
+    newId - 1
   }
 
 }

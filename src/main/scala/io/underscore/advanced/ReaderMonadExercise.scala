@@ -28,8 +28,8 @@ object ReaderMonadExercise {
 
     def checkLogin(userId: Int, password: String): DbReader[Boolean] = for {
       un <- findUsername(userId)
-            authenticated <- un.map(checkPassword(_, password)).getOrElse(false.pure[DbReader])
-//      authenticated <- checkPassword(un.getOrElse(""), password)
+      authenticated <- un.map(checkPassword(_, password)).getOrElse(false.pure[DbReader])
+    //      authenticated <- checkPassword(un.getOrElse(""), password)
     } yield authenticated
 
     println(checkLogin(1, "zerocool").run(db))

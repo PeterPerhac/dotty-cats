@@ -18,11 +18,19 @@ sealed trait DayOfWeek {
 
 object DayOfWeek {
 
-  def dayOfWeek(d: Int): Option[DayOfWeek] = PartialFunction.condOpt(d) {
-    case x if 1 to 7 contains x =>
-      new DayOfWeek {
-        val value: Int = x
-      }
+  def dayOfWeek(d: Int): Option[DayOfWeek] = Some(d) collect {
+    case x if 1 to 7 contains x => new DayOfWeek {
+      val value = x
+    }
+  }
+
+}
+
+
+object InRange {
+
+  def unapply(tpl: Tuple2[Range, Int]): Option[Int] = PartialFunction.condOpt(tpl._2) {
+    case no if tpl._1 contains no => no
   }
 
 }

@@ -46,6 +46,9 @@ object ParallelVsSerialExecution {
     List("apple", "banana", "cherry") traverse findFruit map printer
   }
 
+  def parallelFuturesWithFutureTraverse(): Future[Unit] =
+    Future.traverse(List("apple", "banana", "cherry"))(findFruit) map printer
+
   def parallelFuturesWithCartesians(): Future[Unit] = {
     import cats.syntax.cartesian._
     findFruit("apple") |@| findFruit("banana") |@| findFruit("cherry") map print3
@@ -62,14 +65,16 @@ object ParallelVsSerialExecution {
       _ <- println("\n===\n").pure
       _ <- parallelFuturesWithTraverse()
       _ <- println("\n===\n").pure
+      _ <- parallelFuturesWithFutureTraverse()
+      _ <- println("\n===\n").pure
       _ <- parallelFuturesWithCartesians()
     } yield println("\n===\n")
 
     Await.result(program, Inf)
   }
 
-  private def printer: (List[String]) => Unit = _.foreach(println)
+  val printer: (List[String]) => Unit = _.foreach(println)
 
-  private def print3: (String, String, String) => Unit = Seq(_, _, _).foreach(println)
+  val print3: (String, String, String) => Unit = Seq(_, _, _).foreach(println)
 
 }

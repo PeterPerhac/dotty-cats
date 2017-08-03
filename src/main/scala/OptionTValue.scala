@@ -1,17 +1,17 @@
-import scala.concurrent.ExecutionContext.Implicits.global
+import cats.data.OptionT
+import cats.syntax.ApplicativeSyntax
 import scala.concurrent.duration.Duration.Inf
 import scala.concurrent.{Await, Future}
-import cats.instances.FutureInstances
-import cats.data.OptionT
+import scala.concurrent.ExecutionContext.Implicits.global
 
-object OptionTValue extends FutureInstances {
-
-  def callToAction():Future[String] = OptionT.none[Future, String].value.map(_ => "Something")
-  def callToAction2():Future[String] = OptionT.some[Future, String]("Chuj").cata("Foobar", _ => "Another thing")
+object OptionTValue {
 
   def main(args: Array[String]): Unit = {
-    val futureRedirect = callToAction2()
-    Await.result(futureRedirect map println, Inf)
+    import cats.instances.future._
+    val f1 = Future.failed[String](new IllegalArgumentException())
+    val ot = OptionT.liftF(f1)
+    val f2 = ot.fold("F")(_ => "T") recover {case _ => "F"}
+    Await.ready(f2 map println, Inf)
   }
 
 }

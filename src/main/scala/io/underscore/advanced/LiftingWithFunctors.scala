@@ -11,13 +11,13 @@ object LiftingWithFunctors {
     println(lifted(Option(1)))
     foo()
   }
-
+//TODO FIX cats 1.0
   def foo() = {
     import cats.instances.function._
     import cats.syntax.functor._
     val f1 = (x: Int) => x * 2
     val f2 = (x: Int) => x * x
-    println(f1.map(f2)(10))
+//    println(f1.map(f2)(10))
   }
 
 }

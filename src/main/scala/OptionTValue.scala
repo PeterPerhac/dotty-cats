@@ -1,5 +1,4 @@
 import cats.data.OptionT
-import cats.syntax.ApplicativeSyntax
 import scala.concurrent.duration.Duration.Inf
 import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global

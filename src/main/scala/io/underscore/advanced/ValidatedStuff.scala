@@ -1,16 +1,14 @@
 package io.underscore.advanced
 
 import cats.data.{NonEmptyList, Validated}
+import cats.syntax.{ApplySyntax, ValidatedSyntax}
 
 final case class ValidationError(message: String, arguments: Any*)
 
 final case class Cat(name: String, age: Option[Int] = None)
 
 
-object ValidatedStuff {
-
-  import cats.syntax.cartesian._
-  import cats.syntax.validated._
+object ValidatedStuff extends ApplySyntax with ValidatedSyntax {
 
   type V[T] = Validated[ValidationError, T]
 
@@ -29,10 +27,9 @@ object ValidatedStuff {
 
     val errorFormatter = (nel: NonEmptyList[ValidationError]) =>
       s"an invalid cat ${nel.map(_.message).toList.mkString("(", ", ", ")")}"
-
     List("" -> Some(30), "x" -> Some(20), "Mitzi" -> Some(51), "x" -> Some(99), "" -> Some(99), "Mitzi" -> Some(20), "Mitzi" -> None).foreach {
       case (n, a) =>
-        val cat = checkName(n).toValidatedNel |@| checkAge(a).toValidatedNel map Cat fold(errorFormatter, _ => "a valid cat")
+        val cat = (checkName(n).toValidatedNel, checkAge(a).toValidatedNel).mapN(Cat).fold(errorFormatter, _ => "a valid cat")
         println(s"Inputs $n and $a make $cat")
     }
   }

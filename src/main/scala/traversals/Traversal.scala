@@ -12,8 +12,8 @@ object Traversal extends TraverseSyntax with FutureInstances with ListInstances 
 
   final case class PostCode(pc: String)
 
-  def postCode(pc: String) = OptionT.some[Future, PostCode](PostCode(pc))
-  val noPostCode = OptionT.none[Future, PostCode]
+  def postCode(pc: String): OptionT[Future, PostCode] = OptionT.some(PostCode(pc))
+  val noPostCode: OptionT[Future, PostCode] = OptionT.none
 
   def main(args: Array[String]): Unit = {
 
@@ -30,7 +30,6 @@ object Traversal extends TraverseSyntax with FutureInstances with ListInstances 
 
     val onlyUniques: Future[List[PostCode]] =
       futureListOfOptions.map(_.flatten.distinct)
-
 
     Await.result(futureListOfOptions map println, Inf)
     Await.result(onlyUniques map println, Inf)

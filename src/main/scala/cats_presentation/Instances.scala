@@ -1,6 +1,6 @@
 package cats_presentation
 
-object Instances {
+object  Instances {
 
   def main(args: Array[String]): Unit = {
     import cats.syntax.applicative._

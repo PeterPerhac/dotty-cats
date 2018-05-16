@@ -30,9 +30,11 @@ object Distances {
   }
 
   def main(args: Array[String]): Unit = {
-    val p = Paths.get("/Users/pperhac/work/private-area/national-trust/nt-places-with-coordinates.json")
+    val p = Paths.get("/Users/peterperhac/my/private-area/national-trust/nt-places-with-coordinates.json")
     val json = Json.parse(Files.newInputStream(p))
-    val distanceFromHome = latLonDistance(50.835256, -0.195984) _
+    // 50.726242,-3.4730317 //holiday inn exeter
+    // 50.835256, -0.195984 //home
+    val distanceFromHome = latLonDistance(50.726242,-3.4730317) _
 
     json.validate[List[Place]]
       .getOrElse(List.empty[Place])

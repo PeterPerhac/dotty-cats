@@ -6,7 +6,7 @@ import cats.syntax.ApplySyntax
 
 import scala.util.Try
 
-final case class User(name: String, age: Int)
+final case class User2(name: String, age: Int)
 
 object ValidatedExercise2 extends ApplySyntax {
 
@@ -35,8 +35,8 @@ object ValidatedExercise2 extends ApplySyntax {
   def parseInt(x: String)(data: String): Valid[Int] =
     Validated.fromTry(Try(data.toInt)).leftMap(_ => s"$x must be a valid integer").toValidatedNel
 
-  def parseUser(data: FormData): Valid[User] =
-    (validateName(data), validateAge(data)).mapN(User)
+  def parseUser(data: FormData): Valid[User2] =
+    (validateName(data), validateAge(data)).mapN(User2)
 
   def main(args: Array[String]): Unit = {
     val data = Map("name" -> "Peter", "age" -> "32")

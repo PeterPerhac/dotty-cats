@@ -8,8 +8,8 @@ object CatlessTraversal {
 
   final case class PostCode(pc: String)
 
-  def postCode(pc: String) = Future.successful(Some(PostCode(pc)))
-  val noPostCode = Future.successful(Option.empty[PostCode])
+  def postCode(pc: String): Future[Some[PostCode]] = Future.successful(Some(PostCode(pc)))
+  val noPostCode: Future[Option[PostCode]] = Future.successful(None)
 
   def main(args: Array[String]): Unit = {
 

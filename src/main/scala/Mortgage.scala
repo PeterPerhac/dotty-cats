@@ -15,7 +15,7 @@ object Mortgage {
 
   val interestRate: InterestRate = {
     case dt if dt.isBefore(date(2022, Month.JUNE, 30)) => 1.99
-    case _ => 3.79
+    case _ => 4.00
   }
   val dailyInterestRate: InterestRate = interestRate andThen (_ / 36500)
 
@@ -34,9 +34,12 @@ object Mortgage {
     repayment(date(2018, MAY, 1), 2000.00), //real
     repayment(date(2018, JUNE, 1), 2000.00), //real
     repayment(date(2018, JULY, 1), 2000.00), //real
+    repayment(date(2018, AUGUST, 1), 2000.00), //real
+    repayment(date(2018, SEPTEMBER, 1), 2000.00), //real
+    repayment(date(2018, OCTOBER, 1), 2000.00), //real
    {
       case d
-        if d.isAfter(LocalDate.now) && d.isBefore(date(2022, JUNE, 30)) && d.getDayOfMonth == 1 => 1500
+        if d.isAfter(LocalDate.now) && d.isBefore(date(2022, JUNE, 30)) && d.getDayOfMonth == 1 => 937.68
     }, //
     {
       case d if d.getDayOfMonth == 1 => 1150
@@ -44,8 +47,10 @@ object Mortgage {
   )
 
   val oneOffs: List[Repayment] = List(
-    repayment(date(2018, JANUARY, 4), 10000.00) //real
-  ) ++ (2019 to 2100).map(y => repayment(date(y, APRIL, 8), YEARLY_OVERPAYMENT))
+    repayment(date(2018, JANUARY, 4), 10000.00), //real
+    repayment(date(2018, OCTOBER, 10), 10000.00) //real
+  ) ++ (2019 to 2100).map(y => repayment(date(y, APRIL, 8), YEARLY_OVERPAYMENT)) ++
+       (2019 to 2100).map(y => repayment(date(y, OCTOBER, 8), YEARLY_OVERPAYMENT))
 
   val repayNothing: Repayment = {
     case _ => 0.0

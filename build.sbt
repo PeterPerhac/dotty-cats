@@ -16,6 +16,7 @@ libraryDependencies += "org.typelevel" %% "cats-effect" % "1.0.0"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.0"
 libraryDependencies += "com.typesafe.play" % "play-json_2.12" % "2.6.0-M5"
 libraryDependencies += "com.propensive" %% "contextual-examples" % "1.0.0"
+libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.7.0"
 
 libraryDependencies += "io.monix" %% "monix" % "3.0.0-M3"
 

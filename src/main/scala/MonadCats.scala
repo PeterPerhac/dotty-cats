@@ -1,6 +1,6 @@
 import cats.Monad
 import cats.data.OptionT
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 
 object MonadCats extends Matchers {
 

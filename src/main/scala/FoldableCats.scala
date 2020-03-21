@@ -1,5 +1,5 @@
 import cats.Foldable
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 
 object FoldableCats extends Matchers {
 

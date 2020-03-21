@@ -38,7 +38,7 @@ object TraversingSequentially {
 
   def main(args: Array[String]): Unit = {
     val x = List(5, 4, 3, 2, 1)
-    var results = new mutable.MutableList[Int]()
+    var results = new mutable.ListBuffer[Int]()
 
     // If we were executing in parallel, this function would reverse the list `x` into `results`
     def f(i: Int): Future[String] = {

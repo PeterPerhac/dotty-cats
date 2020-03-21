@@ -77,7 +77,7 @@ object Mortgage {
 
   def main(args: Array[String]): Unit = {
 
-    val growingInterest = unfold(STARTING_POINT) {
+    val growingInterest = LazyList.unfold(STARTING_POINT) {
       case pit @ PointInTime(d, amt, pai) =>
         val tomorrow = d.plus(1, ChronoUnit.DAYS)
         val interest = dailyInterestRate(d) * amt
@@ -105,11 +105,6 @@ object Mortgage {
   object d {
     def unapply(localDate: LocalDate): Option[(Int, Month, Int)] =
       Some(localDate.getYear, localDate.getMonth, localDate.getDayOfMonth)
-  }
-
-  def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = f(z) match {
-    case Some((h, s)) => Stream.cons(h, unfold(s)(f))
-    case None => Stream.empty
   }
 
 }

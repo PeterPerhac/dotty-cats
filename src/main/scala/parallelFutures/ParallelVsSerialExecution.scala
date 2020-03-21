@@ -49,11 +49,6 @@ object ParallelVsSerialExecution {
   def parallelFuturesWithFutureTraverse(): Future[Unit] =
     Future.traverse(List("apple", "banana", "cherry"))(findFruit) map printer
 
-  def parallelFuturesWithCartesians(): Future[Unit] = {
-    import cats.syntax.cartesian._
-    findFruit("apple") |@| findFruit("banana") |@| findFruit("cherry") map print3
-  }
-
   def main(args: Array[String]): Unit = {
     import cats.syntax.applicative._
     val program = for {
@@ -66,8 +61,6 @@ object ParallelVsSerialExecution {
       _ <- parallelFuturesWithTraverse()
       _ <- println("\n===\n").pure
       _ <- parallelFuturesWithFutureTraverse()
-      _ <- println("\n===\n").pure
-      _ <- parallelFuturesWithCartesians()
     } yield println("\n===\n")
 
     Await.result(program, Inf)

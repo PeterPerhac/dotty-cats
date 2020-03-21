@@ -1,0 +1,30 @@
+2020-03-14 1 Italy 17660 2547 1268 252 Local transmission 0
+2020-03-14 2 Spain 4231 1266 120 36 Local transmission 0
+2020-03-14 3 France 3640 780 79 18 Local transmission 0
+2020-03-14 4 Germany 3062 693 6 0 Local transmission 0
+2020-03-14 5 Switzerland 1125 267 6 0 Local transmission 0
+2020-03-14 6 Netherlands 804 190 10 5 Local transmission 0
+2020-03-14 7 The United Kingdom 802 208 10 2 Local transmission 0
+2020-03-14 8 Denmark 801 127 0 0 Local transmission 0
+2020-03-14 9 Sweden 775 155 0 0 Local transmission 0
+2020-03-14 10 Norway 750 261 1 1 Local transmission 0
+2020-03-14 11 Belgium 599 285 0 0 Local transmission 0
+2020-03-14 12 Austria 504 143 1 0 Local transmission 0
+2020-03-14 13 Czechia 150 34 0 0 Local transmission 0
+2020-03-14 14 Slovenia 141 84 0 0 Local transmission 0
+2020-03-14 15 Portugal 112 71 0 0 Local transmission 0
+2020-03-14 16 Finland 109 0 0 0 Local transmission 1
+2020-03-14 17 Israel 100 25 0 0 Local transmission 0
+2020-03-14 18 Greece 98 0 1 0 Local transmission 2
+2020-03-14 19 Ireland 90 20 1 0 Local transmission 0
+2020-03-14 20 Estonia 79 66 0 0 Local transmission 0
+2020-03-14 21 San Marino 66 3 2 0 Local transmission 0
+2020-03-14 22 Romania 64 16 0 0 Local transmission 0
+2020-03-14 23 Poland 64 15 1 0 Local transmission 0
+2020-03-14 24 Iceland 61 0 0 0 Local transmission 4
+2020-03-14 25 Luxembourg 38 21 1 1 Local transmission 0
+2020-03-14 26 Russian Federation 34 0 0 0 Imported cases only 1
+2020-03-14 27 Albania 33 10 1 1 Local transmission 0
+2020-03-14 28 Serbia 31 12 0 0 Local transmission 0
+2020-03-14 29 Slovakia 30 9 0 0 Local transmission 0
+2020-03-14 30 Croatia 27 11 0 0 Local transmission 0

@@ -1,7 +1,19 @@
 package io.underscore.advanced
 
+import cats.Monoid
+
 
 case class Order(totalCost: Double, quantity: Double)
+
+object Order {
+
+  implicit object OrderMonoid extends Monoid[Order] {
+    override def empty: Order = Order(0.0, 0.0)
+
+    override def combine(x: Order, y: Order): Order = Order(x.totalCost + y.totalCost, x.quantity + y.quantity)
+  }
+
+}
 
 object AddingThings {
 
@@ -16,16 +28,6 @@ object AddingThings {
 
     import cats.instances.option._
     println(add(List(Some(1), None, Some(2), None, Some(3))))
-
-    implicit val _: Monoid[Order] = new Monoid[Order] {
-      def combine(o1: Order, o2: Order) =
-        Order(
-          o1.totalCost + o2.totalCost,
-          o1.quantity + o2.quantity
-        )
-
-      def empty = Order(0, 0)
-    }
 
     println(add(List(Order(10, 20), Order(20, 30), Order(5, 5))))
   }

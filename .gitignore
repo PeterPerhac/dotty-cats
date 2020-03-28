@@ -2,3 +2,4 @@
 target/
 .idea/
 *.iml
+/covid-files/temp.json

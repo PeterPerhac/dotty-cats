@@ -1,6 +1,6 @@
 2020-03-19 1 Italy 35713 4207 2978 473 Local transmission 0
 2020-03-19 1 Spain 13716 2538 598 107 Local transmission 0
-2020-03-19 2 France 9043 0 244 0 Local transmission 1
+2020-03-19 2 France 9043 1391 244 69 Local transmission 1
 2020-03-19 3 Germany 8198 1042 13 0 Local transmission 0
 2020-03-19 4 Switzerland 3010 353 21 2 Local transmission 0
 2020-03-19 5 The United Kingdom 2630 672 103 0 Local transmission 0

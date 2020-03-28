@@ -1,0 +1,36 @@
+2020-03-26 1 Italy 74386 5210 7505 685 Local transmission 0
+2020-03-26 2 Spain 47610 7937 3434 738 Local transmission 0
+2020-03-26 3 Germany 36508 4954 198 49 Local transmission 0
+2020-03-26 4 France 24920 2895 1331 231 Local transmission 0
+2020-03-26 5 Switzerland 9714 925 103 17 Local transmission 0
+2020-03-26 6 The United Kingdom 9533 1452 463 41 Local transmission 0
+2020-03-26 7 Netherlands 6412 852 356 80 Local transmission 0
+2020-03-26 8 Austria 5888 606 34 4 Local transmission 0
+2020-03-26 9 Belgium 4937 668 178 56 Local transmission 0
+2020-03-26 10 Portugal 2995 633 43 10 Local transmission 0
+2020-03-26 11 Norway 2916 350 12 2 Local transmission 0
+2020-03-26 12 Sweden 2510 238 42 6 Local transmission 0
+2020-03-26 13 Turkey 2433 561 59 15 Local transmission 0
+2020-03-26 14 Israel 2369 199 5 0 Local transmission 0
+2020-03-26 15 Denmark 1724 133 34 2 Local transmission 0
+2020-03-26 16 Czechia 1654 260 6 3 Local transmission 0
+2020-03-26 17 Ireland 1564 235 9 2 Local transmission 0
+2020-03-26 18 Luxembourg 1333 234 8 0 Local transmission 0
+2020-03-26 19 Poland 1051 150 14 4 Local transmission 0
+2020-03-26 20 Romania 906 144 13 2 Local transmission 0
+2020-03-26 21 Finland 880 88 3 2 Local transmission 0
+2020-03-26 22 Russian Federation 840 182 2 2 Local transmission 0
+2020-03-26 23 Greece 821 78 22 2 Local transmission 0
+2020-03-26 24 Iceland 737 89 2 0 Local transmission 0
+2020-03-26 25 Slovenia 528 48 4 1 Local transmission 0
+2020-03-26 26 Croatia 418 36 1 0 Local transmission 0
+2020-03-26 27 Estonia 404 35 1 1 Local transmission 0
+2020-03-26 28 Serbia 384 81 4 1 Local transmission 0
+2020-03-26 29 Armenia 290 25 0 0 Local transmission 0
+2020-03-26 30 Lithuania 274 65 4 2 Local transmission 0
+2020-03-26 31 Hungary 261 35 10 0 Local transmission 0
+2020-03-26 32 Bulgaria 242 22 3 0 Local transmission 0
+2020-03-26 33 Latvia 221 24 0 0 Local transmission 0
+2020-03-26 34 Slovakia 216 12 0 0 Local transmission 0
+2020-03-26 35 Andorra 213 25 3 2 Local transmission 0
+2020-03-26 36 San Marino 208 21 21 0 Local transmission 0

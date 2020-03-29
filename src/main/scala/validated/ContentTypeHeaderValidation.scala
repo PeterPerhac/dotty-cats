@@ -15,7 +15,8 @@ object ContentTypeHeaderValidation extends ValidatedSyntax with ApplySyntax with
 
   def validateHeader(h: AcceptHeader): ValidatedNel[String, AcceptHeader] = {
     val validVersion = h.version.validNel.ensure(NonEmptyList.of("Unsupported version"))(apiSupportedVersions.contains)
-    val validContentType = h.contentType.validNel.ensure(NonEmptyList.of("Unsupported content type"))("json".equalsIgnoreCase)
+    val validContentType =
+      h.contentType.validNel.ensure(NonEmptyList.of("Unsupported content type"))("json".equalsIgnoreCase)
     (validVersion, validContentType).mapN { case (_, _) => h }
   }
 
@@ -24,7 +25,7 @@ object ContentTypeHeaderValidation extends ValidatedSyntax with ApplySyntax with
 
   def testIt(headers: Map[String, String]): Either[NonEmptyList[String], AcceptHeader] =
     for {
-      h <- headers.get("Accept").toRight(NonEmptyList.of("Accept header is missing"))
+      h           <- headers.get("Accept").toRight(NonEmptyList.of("Accept header is missing"))
       validFormat <- parseHeader(h).toRight(NonEmptyList.of("Accept header format is invalid"))
       validHeader <- validateHeader(validFormat).toEither
     } yield validHeader
@@ -34,13 +35,12 @@ object ContentTypeHeaderValidation extends ValidatedSyntax with ApplySyntax with
     println(testIt(Map("Accept" -> "application/vnd.hmrc.1.0+json")))
     println(testIt(Map("Accept" -> "application/vnd.hmrc.2.0+json")))
 
-
     //invalid ones
     println(testIt(Map("NotAccept" -> "something")))
-    println(testIt(Map("Accept" -> "not valid")))
-    println(testIt(Map("Accept" -> "application/vnd.hmrc.1.1+json")))
-    println(testIt(Map("Accept" -> "application/vnd.hmrc.1.0+xml")))
-    println(testIt(Map("Accept" -> "application/vnd.hmrc.1.1+xml")))
+    println(testIt(Map("Accept"    -> "not valid")))
+    println(testIt(Map("Accept"    -> "application/vnd.hmrc.1.1+json")))
+    println(testIt(Map("Accept"    -> "application/vnd.hmrc.1.0+xml")))
+    println(testIt(Map("Accept"    -> "application/vnd.hmrc.1.1+xml")))
   }
 
 }

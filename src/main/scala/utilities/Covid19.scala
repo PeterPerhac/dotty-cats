@@ -1,149 +1,147 @@
 package utilities
 
 import java.net.URL
-import java.nio.charset.StandardCharsets.UTF_8
-import java.nio.file.Files._
 import java.nio.file.{Files, Paths, StandardCopyOption}
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
-import play.api.libs.json.{Json, OFormat}
+import cats.data.NonEmptyVector
+import play.api.libs.json.{Json, Reads}
 
-import scala.jdk.CollectionConverters._
+import scala.collection.MapView
 import scala.util.Try
-
-case class CovidStat(
-      date: LocalDate,
-      rank: Int,
-      country: String,
-      totalCases: Int,
-      newCases: Int,
-      totalDeaths: Int,
-      newDeaths: Int
-)
-
-object Covid19 extends App {
-
-  val LineRegex = """^(\d\d\d\d-\d\d-\d\d)\s(\d+)\s([\w\s]+)\s(\d+)\s(\d+)\s(\d+)\s(\d+).*$""".r
-
-  val dirStream = Files.newDirectoryStream(Paths.get("./covid-files"), "covid19-*.txt")
-  val files = dirStream.asScala.toVector
-  dirStream.close()
-
-  val allEntries: Vector[String] = files.flatMap { filePath =>
-    readAllLines(filePath, UTF_8).asScala
-  }
-
-  val parseLine: String => Option[CovidStat] = {
-    case LineRegex(ds, r, c, ct, cn, dt, dn) =>
-      Try(CovidStat(LocalDate.parse(ds), r.toInt, c.trim, ct.toInt, cn.toInt, dt.toInt, dn.toInt)).toOption
-    case _ => None
-  }
-
-  val printLine: CovidStat => Unit = println
-
-  val sortedStatistics = allEntries.flatMap(parseLine).sortBy(stat => (stat.country, stat.date.toEpochDay, stat.rank))
-
-  val countriesOfInterest: Set[String] = Set("Slovakia", "The United Kingdom", "Germany", "France", "Spain", "Italy")
-
-  println("Country, Date, Total Cases, New Cases, Total Deaths, New Deaths")
-  for {
-    stat <- sortedStatistics if countriesOfInterest.contains(stat.country)
-    CovidStat(d, r, c, tc, nc, td, nd) = stat
-  } println(s"$c, $d, $tc, $nc, $td, $nd")
-
-}
-
 
 case class CovidData(records: Vector[CovidDataLine])
 
 object CovidData {
-  implicit val format: OFormat[CovidData] = Json.format
+  implicit val format: Reads[CovidData] = Json.reads
 }
 
 case class CovidDataLine(
-                          day: String,
-                          month: String,
-                          year: String,
-                          cases: String,
-                          deaths: String,
-                          countriesAndTerritories: String,
-                          countryterritoryCode: String
-                        ) {
-  val country: String = countriesAndTerritories.replaceAll("_", " ")
-  val d: LocalDate = LocalDate.of(year.toInt, month.toInt, day.toInt)
-
-  override def toString: String = s"$country, $d, $cases, $deaths"
+      date: LocalDate,
+      cases: Int,
+      deaths: Int,
+      country: String,
+      countryCode: String,
+      population: Option[Int]
+) {
+  override def toString: String = s"$country, $date, $cases, $deaths"
 }
 
-case class CovidSimpleStat(date: LocalDate, country: String, newCases: Int, newDeaths: Int)
+case class CovidSimpleStat(date: LocalDate, country: String, cases: Int, deaths: Int)
+
+case class Reading(date: LocalDate, cases: Int, deaths: Int) {
+  override def toString: String = s"$date, $cases, $deaths"
+}
+
+case class CumulativeStats(date: LocalDate, newCases: Int, totalCases: Int, newDeaths: Int, totalDeaths: Int) {
+  override def toString: String = s"$date, $totalCases, $newCases, $totalDeaths, $newDeaths"
+}
+
+object CumulativeStats {
+  def start(r: Reading): CumulativeStats =
+    CumulativeStats(r.date, r.cases, r.cases, r.deaths, r.deaths)
+}
 
 object CovidDataLine {
-  implicit val format: OFormat[CovidDataLine] = Json.format
+
+  import play.api.libs.functional.syntax._
+  import play.api.libs.json._
+
+  val customLocalDateReads: Reads[LocalDate] = Reads {
+    case JsString(value) =>
+      Try(LocalDate.parse(value, DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+        .fold[JsResult[LocalDate]](_ => JsError("can't parse date format"), JsSuccess(_))
+    case _ => JsError("expected a date string")
+  }
+
+  implicit val format: Reads[CovidDataLine] = (
+    (__ \ "dateRep").read[LocalDate](customLocalDateReads) and
+      (__ \ "cases").read[String].map(_.toInt) and
+      (__ \ "deaths").read[String].map(_.toInt) and
+      (__ \ "countriesAndTerritories").read[String].map(_.replaceAll("_", " ")) and
+      (__ \ "countryterritoryCode").read[String] and
+      (__ \ "popData2018").read[String].map(s => Option(s).filter(_.nonEmpty).flatMap(nes => Try(nes.toInt).toOption))
+  )(CovidDataLine.apply _)
 }
 
-object DownloadAndCovert extends App {
+object Covid19 extends App {
 
-  //  val jsonUrl = """https://opendata.ecdc.europa.eu/covid19/casedistribution/json/"""
-  val jsonUrl = """file:////Users/peterperhac/my/scala/dotty-cats/covid-files/covid-data-dev.json"""
+  val jsonUrl = """https://opendata.ecdc.europa.eu/covid19/casedistribution/json/"""
+  //  val jsonUrl = """file:////Users/peterperhac/my/scala/dotty-cats/covid-files/covid-data-dev.json"""
 
-  val countryFilter: Set[String] = Set(
-    "ALB", //	Albania
-    "AND", //	Andorra
-    "AUS", // Australia
-    "AUT", //	Austria
-    "BEL", //	Belgium
-    "BGR", //	Bulgaria
-    "BIH", //	Bosnia and Herzegovina
-    "BLR", //	Belarus
-    "BRA", // Brazil
-    "CAN", // Canada
-    "CHE", //	Switzerland
-    "CHN", // China
-    "CYP", //	Cyprus
-    "CZE", //	Czech
-    "DEU", //	Germany
-    "DNK", //	Denmark
-    "ESP", //	Spain
-    "EST", //	Estonia
-    "FIN", //	Finland
-    "FRA", //	France
-    "FRO", //	Faroe Islands
-    "GBR", //	United Kingdom
-    "GIB", //	Gibraltar
-    "GRC", //	Greece
-    "HRV", //	Croatia
-    "HUN", //	Hungary
-    "IMN", //	Isle of Man
-    "IND", // India
-    "IRL", //	Ireland
-    "ISL", //	Iceland
-    "ITA", //	Italy
-    "LIE", //	Liechtenstein
-    "LTU", //	Lithuania
-    "LUX", //	Luxembourg
-    "LVA", //	Latvia
-    "MCO", //	Monaco
-    "MDA", //	Moldova
-    "MEX", // Mexico
-    "MKD", //	Macedonia
-    "MLT", //	Malta
-    "MNE", //	Montenegro
-    "NLD", //	Netherlands
-    "NOR", //	Norway
-    "POL", //	Poland
-    "PRT", //	Portugal
-    "ROU", //	Romania
-    "RUS", //	Russia
-    "SMR", //	San Marino
-    "SRB", //	Serbia
-    "SVK", //	Slovakia
-    "SVN", //	Slovenia
-    "SWE", //	Sweden
-    "UKR", //	Ukraine
-    "USA", // United States of America
-    "VAT", //	Vatican
-    "XKX", //	Kosovo
-  )
+  val countryFilter: String => Boolean = Set(
+    "ALB" /*	Albania */,
+    "AND" /*	Andorra */,
+    "AUS" /* Australia */,
+    "AUT" /*	Austria */,
+    "BEL" /*	Belgium */,
+    "BGR" /*	Bulgaria */,
+    "BIH" /*	Bosnia and Herzegovina */,
+    "BLR" /*	Belarus */,
+    "BRA" /* Brazil */,
+    "CAN" /* Canada */,
+    "CHE" /*	Switzerland */,
+    "CHN" /* China */,
+    "CYP" /*	Cyprus */,
+    "CZE" /*	Czech */,
+    "DEU" /*	Germany */,
+    "DNK" /*	Denmark */,
+    "ESP" /*	Spain */,
+    "EST" /*	Estonia */,
+    "FIN" /*	Finland */,
+    "FRA" /*	France */,
+    "FRO" /*	Faroe Islands */,
+    "GBR" /*	United Kingdom */,
+    "GIB" /*	Gibraltar */,
+    "GRC" /*	Greece */,
+    "HRV" /*	Croatia */,
+    "HUN" /*	Hungary */,
+    "IMN" /*	Isle of Man */,
+    "IND" /* India */,
+    "IRL" /*	Ireland */,
+    "ISL" /*	Iceland */,
+    "ITA" /*	Italy */,
+    "LIE" /*	Liechtenstein */,
+    "LTU" /*	Lithuania */,
+    "LUX" /*	Luxembourg */,
+    "LVA" /*	Latvia */,
+    "MCO" /*	Monaco */,
+    "MDA" /*	Moldova */,
+    "MEX" /* Mexico */,
+    "MKD" /*	Macedonia */,
+    "MLT" /*	Malta */,
+    "MNE" /*	Montenegro */,
+    "NLD" /*	Netherlands */,
+    "NOR" /*	Norway */,
+    "POL" /*	Poland */,
+    "PRT" /*	Portugal */,
+    "ROU" /*	Romania */,
+    "RUS" /*	Russia */,
+    "SMR" /*	San Marino */,
+    "SRB" /*	Serbia */,
+    "SVK" /*	Slovakia */,
+    "SVN" /*	Slovenia */,
+    "SWE" /*	Sweden */,
+    "UKR" /*	Ukraine */,
+    "USA" /* United States of America */,
+    "VAT" /*	Vatican */,
+    "XKX" /*	Kosovo */
+  ).contains
+
+  val countriesOfInterest: String => Boolean =
+    Set(
+      "Slovakia",
+      "United Kingdom",
+      "Spain",
+      "Germany",
+      "United States of America",
+      "Italy",
+      "Switzerland",
+      "Brazil",
+      "Czech Republic",
+      "India"
+    ).contains
 
   val tempFilePath = Paths.get("./covid-files/temp.json")
   val startDate = LocalDate.of(2019, 12, 1)
@@ -153,17 +151,37 @@ object DownloadAndCovert extends App {
   try {
     Files.copy(in, tempFilePath, StandardCopyOption.REPLACE_EXISTING)
     val data = Json.parse(Files.newInputStream(tempFilePath)).as[CovidData]
-    val recordsByCountry: Map[String, Vector[CovidSimpleStat]] =
-      data.records.collect {
-        case r if countryFilter.contains(r.countryterritoryCode) => CovidSimpleStat(r.d, r.country, r.cases.toInt, r.deaths.toInt)
-      }.sortBy(css => (css.country, css.date.toEpochDay))
+    val recordsByCountry: MapView[String, NonEmptyVector[Reading]] =
+      data.records
+        .collect {
+          case r if countryFilter(r.countryCode) && (r.cases > 0 || r.deaths > 0) =>
+            CovidSimpleStat(r.date, r.country, r.cases, r.deaths)
+        }
+        .sortBy(css => (css.country, css.date.toEpochDay))
         .groupBy(_.country)
+        .view
+        .mapValues(readings => NonEmptyVector.fromVectorUnsafe(readings.map(s => Reading(s.date, s.cases, s.deaths))))
 
+    val printHistory: (String, NonEmptyVector[Reading]) => Unit = {
+      case (c, rs) =>
+        val dataWithCumulativeNumbers = rs.foldLeft(Vector(CumulativeStats.start(rs.head))) {
+          case (acc, r) =>
+            acc :+ CumulativeStats(
+              r.date,
+              r.cases,
+              acc.last.totalCases + r.cases,
+              r.deaths,
+              acc.last.totalDeaths + r.deaths
+            )
+        }
+        println(s"""${dataWithCumulativeNumbers.map(r => s"$c, $r").mkString("\n")}
+                   |
+                   |=======
+                   |""".stripMargin)
+    }
 
-//    val dateStream = LazyList.unfold[LocalDate, LocalDate](startDate)(d => condOpt(d) {
-//      case date if !date.isAfter(today) => (date, date.plusDays(1))
-//    })
-
+    val countryData = recordsByCountry.filterKeys(countriesOfInterest)
+    countryData.keySet.toList.sorted.foreach(country => printHistory(country, countryData(country)))
   } finally {
     in.close()
     Files.delete(tempFilePath)

@@ -34,9 +34,10 @@ object Distances {
     val json = Json.parse(Files.newInputStream(p))
     // 50.726242,-3.4730317 //holiday inn exeter
     // 50.835256, -0.195984 //home
-    val distanceFromHome = latLonDistance(50.726242,-3.4730317) _
+    val distanceFromHome = latLonDistance(50.726242, -3.4730317) _
     implicit val doubleOrdering = Ordering.Double.IeeeOrdering
-    json.validate[List[Place]]
+    json
+      .validate[List[Place]]
       .getOrElse(List.empty[Place])
       .map(p => p -> distanceFromHome(p.lat, p.lon))
       .sortBy {

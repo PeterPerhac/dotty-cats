@@ -26,34 +26,36 @@ trait WeatherService {
   def output(weatherInfo: WeatherInfo): WeatherOp[Unit] = liftF(OutputWeatherInfo(weatherInfo))
 }
 
-abstract class Interpreter[F[_] : Sync] extends ~>[WeatherOperation, F] {
+abstract class Interpreter[F[_]: Sync] extends ~>[WeatherOperation, F] {
   def S: Sync[F] = implicitly
 }
 
-class DummyInterpreter[F[_] : Sync] extends Interpreter[F] {
+class DummyInterpreter[F[_]: Sync] extends Interpreter[F] {
 
   override def apply[A](fa: WeatherOperation[A]): F[A] = fa match {
-    case GetLocation => S.delay {
-      println("Please enter Location:")
-      scala.io.StdIn.readLine()
-    }
-    case QueryWeatherSource(location) => S.delay {
-      WeatherInfo(location, location.length, location.length * 2)
-    }
-    case OutputWeatherInfo(wi) => S.delay {
-      println(s"Weather in ${wi.location}: temperatures between ${wi.minTemp} - ${wi.maxTemp}")
-    }
+    case GetLocation =>
+      S.delay {
+        println("Please enter Location:")
+        scala.io.StdIn.readLine()
+      }
+    case QueryWeatherSource(location) =>
+      S.delay {
+        WeatherInfo(location, location.length, location.length * 2)
+      }
+    case OutputWeatherInfo(wi) =>
+      S.delay {
+        println(s"Weather in ${wi.location}: temperatures between ${wi.minTemp} - ${wi.maxTemp}")
+      }
   }
 }
-
 
 object CheckWeather extends WeatherService {
 
   def main(args: Array[String]): Unit = {
     val program = for {
-      location <- askLocation
+      location    <- askLocation
       weatherInfo <- queryWeatherSource(location)
-      _ <- output(weatherInfo)
+      _           <- output(weatherInfo)
     } yield ()
 
     program.foldMap(new DummyInterpreter[Coeval]).run

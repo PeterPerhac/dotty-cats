@@ -1,11 +1,9 @@
-trait Simulation[T]{
-  def result:T
+trait Simulation[T] {
+  def result: T
 }
 
 object Simulator {
 
-  def main(args: Array[String]): Unit = {
-
-  }
+  def main(args: Array[String]): Unit = {}
 
 }

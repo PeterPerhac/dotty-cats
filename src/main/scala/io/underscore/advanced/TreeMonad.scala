@@ -12,10 +12,6 @@ object TreeMonad {
 
   def leaf[A](value: A): Tree[A] = Leaf(value)
 
-
-
-  def main(args: Array[String]): Unit = {
-
-  }
+  def main(args: Array[String]): Unit = {}
 
 }

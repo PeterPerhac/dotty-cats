@@ -12,17 +12,17 @@ case object Black extends Colour { val hex = "#000000" }
 
 object Colour {
 
-  implicit def pairToValue(pair : (String, JsString)): JsObject = JsObject(Seq(pair._1 -> pair._2))
+  implicit def pairToValue(pair: (String, JsString)): JsObject = JsObject(Seq(pair._1 -> pair._2))
 
   implicit object ColourFormatter extends Format[Colour] {
     override def writes(o: Colour): JsValue = "hex" -> JsString(o.hex)
 
     override def reads(json: JsValue): JsResult[Colour] = (json \ "hex").as[String] match {
-      case Black.hex => JsSuccess(Black)
-      case White.hex => JsSuccess(White)
+      case Black.hex  => JsSuccess(Black)
+      case White.hex  => JsSuccess(White)
       case Yellow.hex => JsSuccess(Yellow)
-      case Brown.hex => JsSuccess(Brown)
-      case _ => JsError("unrecognised colour")
+      case Brown.hex  => JsSuccess(Brown)
+      case _          => JsError("unrecognised colour")
     }
   }
 }
@@ -42,12 +42,11 @@ object Pet {
     override def reads(json: JsValue): JsResult[Pet] = (json \ "type").as[String] match {
       case "cat" => Json.format[Cat].reads(json)
       case "dog" => Json.format[Dog].reads(json)
-      case _ => JsError("unrecognised pet")
+      case _     => JsError("unrecognised pet")
     }
   }
 
 }
-
 
 object JsonFormatForADT {
 

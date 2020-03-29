@@ -20,13 +20,11 @@ object FutureOptions {
     val exclamation = oa("!")
 
     for {
-      greeting <- OptionT(hello)
+      greeting  <- OptionT(hello)
       separator <- OptionT.liftF[Future, String](comma)
-      subject <-  OptionT(world)
-      ending <- OptionT.fromOption(exclamation)
-    } yield {
-
-    }
+      subject   <- OptionT(world)
+      ending    <- OptionT.fromOption(exclamation)
+    } yield {}
 
   }
 

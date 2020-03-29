@@ -36,7 +36,7 @@ object CombiningExercise {
     val crates: Vector[Option[Crate]] = loadCrates(args)
 
     //lightweight crates weigh at most 20 kg
-        val lightCratesTotalWeight: Kilograms = ???
+    val lightCratesTotalWeight: Kilograms = ???
 
     //stair-stepping, number of intermediary collections built along the way
     //    val lightCratesTotalWeight: Kilograms =
@@ -60,7 +60,6 @@ object CombiningExercise {
     //    val lightCratesTotalWeight: Kilograms = crates.collect {
     //      case Some(Crate(weight, _)) if weight <= 20.kg => weight
     //    }.combineAll
-
 
     // similar to above but not using the cats' provided syntax
     //    val lightCratesTotalWeight: Kilograms = Monoid[Kilograms].combineAll(crates.collect {

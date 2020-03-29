@@ -1,6 +1,5 @@
 package io.underscore.advanced
 
-
 final case class Box[A](value: A)
 
 object ContravariantFunctors {
@@ -19,13 +18,13 @@ object ContravariantFunctors {
 
     def contramap[B](func: B => A): Printable[B] = {
       val self = this
-      (value: B) => self.format(func(value))
+      (value: B) =>
+        self.format(func(value))
     }
 
   }
 
   def format[A](value: A)(implicit p: Printable[A]): String = p.format(value)
-
 
   def main(args: Array[String]): Unit = {
 
@@ -36,6 +35,5 @@ object ContravariantFunctors {
 //    println(format(Box(123)))
 
   }
-
 
 }

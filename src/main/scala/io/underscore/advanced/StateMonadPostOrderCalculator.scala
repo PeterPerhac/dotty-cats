@@ -14,19 +14,17 @@ object StateMonadPostOrderCalculator {
       case _ => sys.error("invalid operand stack")
     }
 
-
   def operand(d: Double): CalcState[Double] =
-    State[List[Double], Double] {
-      stack => (d :: stack, d)
+    State[List[Double], Double] { stack =>
+      (d :: stack, d)
     }
-
 
   def evalOne(sym: String): CalcState[Double] = sym match {
     case "+" => operator(_ + _)
     case "-" => operator(_ - _)
     case "*" => operator(_ * _)
     case "/" => operator(_ / _)
-    case n => operand(n.toDouble)
+    case n   => operand(n.toDouble)
   }
 
   def evalAll(input: List[String]): CalcState[Double] = {
@@ -41,8 +39,8 @@ object StateMonadPostOrderCalculator {
     println(program.runA(Nil).value)
 
     val program2 = for {
-      _ <- evalAll(List("1", "2", "+"))
-      _ <- evalAll(List("3", "4", "+"))
+      _   <- evalAll(List("1", "2", "+"))
+      _   <- evalAll(List("3", "4", "+"))
       ans <- evalOne("-")
     } yield ans
 

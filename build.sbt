@@ -4,11 +4,11 @@ version := "1.0"
 
 scalaVersion := "2.13.1"
 
-libraryDependencies += "org.typelevel" %% "cats-core" % "2.1.0"
-libraryDependencies += "org.typelevel" %% "cats-free" % "2.1.0"
-libraryDependencies += "org.typelevel" %% "cats-kernel" % "2.1.0"
-libraryDependencies += "org.typelevel" %% "cats-laws" % "2.1.0"
-libraryDependencies += "org.typelevel" %% "cats-macros" % "2.1.0"
+libraryDependencies += "org.typelevel" %% "cats-core"    % "2.1.0"
+libraryDependencies += "org.typelevel" %% "cats-free"    % "2.1.0"
+libraryDependencies += "org.typelevel" %% "cats-kernel"  % "2.1.0"
+libraryDependencies += "org.typelevel" %% "cats-laws"    % "2.1.0"
+libraryDependencies += "org.typelevel" %% "cats-macros"  % "2.1.0"
 libraryDependencies += "org.typelevel" %% "cats-testkit" % "2.1.0"
 
 libraryDependencies += "org.typelevel" %% "cats-effect" % "2.1.2"
@@ -29,4 +29,3 @@ scalacOptions ++= Seq(
   "-language:postfixOps",
   "-deprecation"
 )
- 

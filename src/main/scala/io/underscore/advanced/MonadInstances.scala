@@ -16,10 +16,11 @@ object MonadInstances {
     println(1.pure[List])
 
     import scala.language.higherKinds
-    def sumSquare[M[_] : Monad](a: M[Int], b: M[Int]): M[Int] = for {
-      x <- a
-      y <- b
-    } yield x * x + y * y
+    def sumSquare[M[_]: Monad](a: M[Int], b: M[Int]): M[Int] =
+      for {
+        x <- a
+        y <- b
+      } yield x * x + y * y
 
     println(sumSquare(Option(3), Option(4)))
     println(sumSquare(List(1, 2, 3), List(4, 5)))

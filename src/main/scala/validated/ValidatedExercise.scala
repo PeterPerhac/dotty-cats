@@ -16,11 +16,13 @@ object ValidatedExercise extends ApplySyntax with EitherSyntax with ListInstance
     def >>=[B](fu: T => Errors Or B): Errors Or B = left.flatMap(fu)
   }
 
-  def getValue(key: String)(map: FormData): Errors Or String = map.get(key).toRight(List(s"no data found for property $key"))
+  def getValue(key: String)(map: FormData): Errors Or String =
+    map.get(key).toRight(List(s"no data found for property $key"))
 
   def readName(data: FormData): Errors Or String = getValue("name")(data) >>= nonBlank("name")
 
-  def readAge(data: FormData): Errors Or Int = getValue("age")(data) >>= nonBlank("age") >>= parseInt("age") >>= nonNegative("age")
+  def readAge(data: FormData): Errors Or Int =
+    getValue("age")(data) >>= nonBlank("age") >>= parseInt("age") >>= nonNegative("age")
 
   def nonBlank(property: String)(data: String): Errors Or String =
     Either.right[Errors, String](data).ensure(List(s"$property cannot be blank"))(_.nonEmpty)
@@ -35,12 +37,12 @@ object ValidatedExercise extends ApplySyntax with EitherSyntax with ListInstance
     (readName(data).toValidated, readAge(data).toValidated).mapN(User)
 
   def main(args: Array[String]): Unit = {
-    val data = Map("name" -> "Peter", "age" -> "32")
+    val data = Map("name"     -> "Peter", "age" -> "32")
     val badData1 = Map("name" -> "Peter", "age" -> "-12")
     val badData2 = Map("naam" -> "Peter", "age" -> "-12")
     val badData3 = Map("naam" -> "Peter", "age" -> "foobar")
     val badData4 = Map("name" -> "Peter", "age" -> "foobar")
-    val badData5 = Map("name" -> "", "age" -> "")
+    val badData5 = Map("name" -> "", "age"      -> "")
     println(s" parsed user: ${parseUser(data)}")
     println(s" parsed user: ${parseUser(badData1)}")
     println(s" parsed user: ${parseUser(badData2)}")

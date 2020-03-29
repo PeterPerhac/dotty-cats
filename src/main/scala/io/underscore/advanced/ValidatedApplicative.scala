@@ -17,7 +17,8 @@ object ValidatedApplicative {
 
     def errOrA1(): ErrorsOr[Int] = "this is not ok".pure.invalid
     def errOrA2(): ErrorsOr[Int] = 2.valid
-    def errOrA3(): ErrorsOr[Int] = Validated.fromTry(Try("foo".toInt)).leftMap(t => s"exception in: ${t.getMessage}".pure)
+    def errOrA3(): ErrorsOr[Int] =
+      Validated.fromTry(Try("foo".toInt)).leftMap(t => s"exception in: ${t.getMessage}".pure)
     def errOrA4(): ErrorsOr[Int] = 4.valid
     def errOrA5(): ErrorsOr[Int] = "this is plain wrong!".pure.invalid
 

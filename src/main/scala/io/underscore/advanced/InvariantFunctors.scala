@@ -1,6 +1,5 @@
 package io.underscore.advanced
 
-
 object InvariantFunctors {
 
   trait Codec[A] {
@@ -29,7 +28,6 @@ object InvariantFunctors {
       def decode(value: String): Option[Int] = scala.util.Try(value.toInt).toOption
     }
 
-
     def encode[A](value: A)(implicit c: Codec[A]): String = c.encode(value)
 
     def decode[A](value: String)(implicit c: Codec[A]): Option[A] = c.decode(value)
@@ -39,6 +37,5 @@ object InvariantFunctors {
     println(encode(Box(123)))
     println(decode[Box[Int]]("123"))
   }
-
 
 }

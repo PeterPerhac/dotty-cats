@@ -18,7 +18,7 @@ object TraversingSequentially {
 
   implicit class RichTraverse[F[_], A](as: F[A]) {
 
-    def sequentialTraverse[B, M[_] : Monad](f: A => M[B])(implicit T: Traverse[F]): M[F[B]] = {
+    def sequentialTraverse[B, M[_]: Monad](f: A => M[B])(implicit T: Traverse[F]): M[F[B]] = {
       case class LazyFunction[X](a: A, f: A => M[X]) {
         def apply: M[X] = f(a)
       }

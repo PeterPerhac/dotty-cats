@@ -36,7 +36,8 @@ object CombiningExercise2 {
 
   def main(args: Array[String]): Unit = {
     //medium crates weigh >= 10 kg and < 25kg
-    val kgTotalMidSized: Kilograms = crates.flatten.map(_.weight).filter(kg => kg >= 10.kg && kg < 25.kg).fold(0.kg)(_ + _)
+    val kgTotalMidSized: Kilograms =
+      crates.flatten.map(_.weight).filter(kg => kg >= 10.kg && kg < 25.kg).fold(0.kg)(_ + _)
     println(kgTotalMidSized)
   }
 

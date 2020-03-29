@@ -2,12 +2,12 @@ import java.util.concurrent.CountDownLatch
 
 import scala.concurrent.Future
 
-
 object SequenceRequests {
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  private class ServiceCall[-A, +R](f: (A) => Future[Option[R]], name: String = "") extends Function1[A, Future[Option[R]]] {
+  private class ServiceCall[-A, +R](f: (A) => Future[Option[R]], name: String = "")
+      extends Function1[A, Future[Option[R]]] {
 
     override def apply(arg: A): Future[Option[R]] = f(arg)
 
@@ -39,10 +39,11 @@ object SequenceRequests {
 
   def returnFirstSuccess[A, R](funs: List[(A) => Future[Option[R]]], arg: A): Future[Option[R]] = funs match {
     case Nil => Future.successful(None)
-    case f :: tail => f(arg) flatMap {
-      case Some(str) => Future.successful(Some(str))
-      case None => returnFirstSuccess(tail, arg)
-    }
+    case f :: tail =>
+      f(arg) flatMap {
+        case Some(str) => Future.successful(Some(str))
+        case None      => returnFirstSuccess(tail, arg)
+      }
   }
 
   def main(args: Array[String]): Unit = {

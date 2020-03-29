@@ -19,13 +19,13 @@ sealed trait DayOfWeek {
 object DayOfWeek {
 
   def dayOfWeek(d: Int): Option[DayOfWeek] = Some(d) collect {
-    case x if 1 to 7 contains x => new DayOfWeek {
-      val value = x
-    }
+    case x if 1 to 7 contains x =>
+      new DayOfWeek {
+        val value = x
+      }
   }
 
 }
-
 
 object InRange {
 

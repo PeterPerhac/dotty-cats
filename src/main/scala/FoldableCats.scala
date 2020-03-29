@@ -3,7 +3,6 @@ import org.scalatest.matchers.should.Matchers
 
 object FoldableCats extends Matchers {
 
-
   def main(args: Array[String]): Unit = {
     import cats.implicits._
 

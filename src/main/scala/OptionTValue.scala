@@ -9,9 +9,8 @@ object OptionTValue {
     import cats.instances.future._
     val f1 = Future.failed[String](new IllegalArgumentException())
     val ot = OptionT.liftF(f1)
-    val f2 = ot.fold("F")(_ => "T") recover {case _ => "F"}
+    val f2 = ot.fold("F")(_ => "T") recover { case _ => "F" }
     Await.ready(f2 map println, Inf)
   }
 
 }
-

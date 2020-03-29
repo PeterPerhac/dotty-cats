@@ -2,7 +2,6 @@ package io.underscore.advanced
 
 import cats.Monoid
 
-
 case class Order(totalCost: Double, quantity: Double)
 
 object Order {

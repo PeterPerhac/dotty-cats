@@ -11,23 +11,24 @@ object ConditionalFlatMapExample2 extends ConditionalFlatMap {
   import cats.instances.future._
 
   def iPrint(i: Int) = Future { Thread.sleep(150); println(s"printing: $i") }
-  def randomNumber() = Future { Thread.sleep(150);  nextInt(84) }
+  def randomNumber() = Future { Thread.sleep(150); nextInt(84) }
 
-  def program() = for {
-    magicNum <- randomNumber()
-    _        <- iPrint(magicNum)
-  } yield magicNum
+  def program() =
+    for {
+      magicNum <- randomNumber()
+      _        <- iPrint(magicNum)
+    } yield magicNum
 
-  def program2() = for {
-    magicNum <- randomNumber()
-    _        <- iPrint(magicNum) onlyIf magicNum > 42
-  } yield magicNum
+  def program2() =
+    for {
+      magicNum <- randomNumber()
+      _        <- iPrint(magicNum) onlyIf magicNum > 42
+    } yield magicNum
 
   def main(args: Array[String]): Unit = {
-    (1 to 10).foreach( _ => Await.result(program().map(println), Inf))
+    (1 to 10).foreach(_ => Await.result(program().map(println), Inf))
     println("=====================")
-    (1 to 10).foreach( _ => Await.result(program2().map(println), Inf))
+    (1 to 10).foreach(_ => Await.result(program2().map(println), Inf))
   }
 
 }
-

@@ -10,7 +10,8 @@ object Scaffolding {
 
     def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] = as.foldRight(Nil: List[B])(f(_) ::: _)
 
-    def filter[A](as: List[A])(p: A => Boolean): List[A] = as.foldRight(Nil: List[A])((a, b) => if (p(a)) a :: b else b)
+    def filter[A](as: List[A])(p: A => Boolean): List[A] =
+      as.foldRight(Nil: List[A])((a, b) => if (p(a)) a :: b else b)
 
     def sum[A](as: List[A])(implicit ma: Monoid[A]) = as.foldRight(ma.empty)(ma.combine)
 

@@ -21,7 +21,6 @@ object ParallelVsSerialExecution {
       c <- findFruit("cherry")
     } yield Seq(a, b, c).foreach(println)
 
-
   def parallelFuturesBasic(): Future[Unit] = {
     val fa = findFruit("apple")
     val fb = findFruit("banana")

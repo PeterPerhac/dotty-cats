@@ -1,5 +1,3 @@
-
-
 /*
  * Copyright 2017 HM Revenue & Customs
  *

@@ -10,20 +10,22 @@ object ConditionalFlatMapExample extends ConditionalFlatMap {
   def iPrint(i: Int) = Option { println(s"printing: $i") }
   def randomNumber() = Option { nextInt(84) }
 
-  def program() = for {
-    magicNum <- randomNumber()
-    _        <- iPrint(magicNum)
-  } yield magicNum
+  def program() =
+    for {
+      magicNum <- randomNumber()
+      _        <- iPrint(magicNum)
+    } yield magicNum
 
-  def program2() = for {
-    magicNum <- randomNumber()
-    _        <- iPrint(magicNum) onlyIf magicNum > 42
-  } yield magicNum
+  def program2() =
+    for {
+      magicNum <- randomNumber()
+      _        <- iPrint(magicNum) onlyIf magicNum > 42
+    } yield magicNum
 
   def main(args: Array[String]): Unit = {
-    (1 to 10).foreach( _=> program().map(println))
+    (1 to 10).foreach(_ => program().map(println))
     println("=====================")
-    (1 to 10).foreach( _=> program2().map(println))
+    (1 to 10).foreach(_ => program2().map(println))
   }
 
 }

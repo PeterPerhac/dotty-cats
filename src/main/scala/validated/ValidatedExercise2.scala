@@ -39,12 +39,12 @@ object ValidatedExercise2 extends ApplySyntax {
     (validateName(data), validateAge(data)).mapN(User2)
 
   def main(args: Array[String]): Unit = {
-    val data = Map("name" -> "Peter", "age" -> "32")
+    val data = Map("name"     -> "Peter", "age" -> "32")
     val badData1 = Map("name" -> "Peter", "age" -> "-12")
     val badData2 = Map("naam" -> "Peter", "age" -> "-12")
     val badData3 = Map("naam" -> "Peter", "age" -> "foobar")
     val badData4 = Map("name" -> "Peter", "age" -> "foobar")
-    val badData5 = Map("name" -> "", "age" -> "")
+    val badData5 = Map("name" -> "", "age"      -> "")
     println(s" parsed user: ${parseUser(data)}")
     println(s" parsed user: ${parseUser(badData1)}")
     println(s" parsed user: ${parseUser(badData2)}")

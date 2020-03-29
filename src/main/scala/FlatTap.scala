@@ -7,7 +7,6 @@ import cats.instances.future._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration.Inf
 
-
 object FlatTap {
 
   val f: String => Future[Int] = s => {

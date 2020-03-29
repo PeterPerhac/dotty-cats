@@ -5,7 +5,7 @@ object Substring {
 
     val fn = "PL124-foobar-lol.jpg"
 
-    val treated = fn.substring(fn.indexOf('-')+1)
+    val treated = fn.substring(fn.indexOf('-') + 1)
 
     println(treated)
 

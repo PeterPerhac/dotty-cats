@@ -15,7 +15,7 @@ object Mortgage {
 
   val interestRate: InterestRate = {
     case dt if dt.isBefore(date(2022, Month.JUNE, 30)) => 1.99
-    case _ => 4.00
+    case _                                             => 4.00
   }
   val dailyInterestRate: InterestRate = interestRate andThen (_ / 36500)
 
@@ -37,9 +37,8 @@ object Mortgage {
     repayment(date(2018, AUGUST, 1), 2000.00), //real
     repayment(date(2018, SEPTEMBER, 1), 2000.00), //real
     repayment(date(2018, OCTOBER, 1), 2000.00), //real
-   {
-      case d
-        if d.isAfter(LocalDate.now) && d.isBefore(date(2022, JUNE, 30)) && d.getDayOfMonth == 1 => 937.68
+    {
+      case d if d.isAfter(LocalDate.now) && d.isBefore(date(2022, JUNE, 30)) && d.getDayOfMonth == 1 => 937.68
     }, //
     {
       case d if d.getDayOfMonth == 1 => 1150
@@ -50,7 +49,7 @@ object Mortgage {
     repayment(date(2018, JANUARY, 4), 10000.00), //real
     repayment(date(2018, OCTOBER, 10), 10000.00) //real
   ) ++ (2019 to 2100).map(y => repayment(date(y, APRIL, 8), YEARLY_OVERPAYMENT)) ++
-       (2019 to 2100).map(y => repayment(date(y, OCTOBER, 8), YEARLY_OVERPAYMENT))
+    (2019 to 2100).map(y => repayment(date(y, OCTOBER, 8), YEARLY_OVERPAYMENT))
 
   val repayNothing: Repayment = {
     case _ => 0.0
@@ -58,7 +57,6 @@ object Mortgage {
 
   val repay: Repayment =
     (monthlyRepayments ++ oneOffs :+ repayNothing).reduceLeft(_ orElse _)
-
 
   val headerRow = "date     \tstill owe\tinterest\trepaid  \tsaved    \ttake home\ttotal cost\tratio"
 
@@ -85,19 +83,20 @@ object Mortgage {
         val repayment = repay(tomorrow)
         val newAmt = amtWithInterest - repayment
         Option((pit, PointInTime(tomorrow, newAmt, PaymentAndInterest(repayment, interest) :: pai)))
-          .filter{
+          .filter {
             case (currentPoint, _) => currentPoint.amountOwed >= 0
           }
     }
 
     growingInterest
       .collect {
-        case pit@PointInTime(d(y, _, 1), _, history) if y <= SELL_YEAR => pit
+        case pit @ PointInTime(d(y, _, 1), _, history) if y <= SELL_YEAR => pit
       }
       .foreach {
-        case pit@ PointInTime(d(y, SEPTEMBER, 1),_, _) => println(s"---------\n$y/${y+1}\n---------\n$headerRow\n$pit")
-        case pit@ PointInTime(d(_, _, 1), _, _) => println(pit)
-        case _ => ()
+        case pit @ PointInTime(d(y, SEPTEMBER, 1), _, _) =>
+          println(s"---------\n$y/${y + 1}\n---------\n$headerRow\n$pit")
+        case pit @ PointInTime(d(_, _, 1), _, _) => println(pit)
+        case _                                   => ()
       }
 
   }

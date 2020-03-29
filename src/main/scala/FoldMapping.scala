@@ -1,4 +1,5 @@
-object FoldMapping extends org.scalatest.matchers.should.Matchers with cats.instances.AllInstances with cats.syntax.FoldableSyntax {
+object FoldMapping
+    extends org.scalatest.matchers.should.Matchers with cats.instances.AllInstances with cats.syntax.FoldableSyntax {
 
   def main(args: Array[String]): Unit = {
     val l = List(1, 2, 3, 4, 5)

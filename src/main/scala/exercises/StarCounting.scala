@@ -2,7 +2,6 @@ package exercises
 
 import scala.collection.mutable
 
-
 sealed trait Pixel
 
 case object Darkness extends Pixel
@@ -12,53 +11,54 @@ final case class Star(var id: Option[Int] = None) extends Pixel
 final case class Row(pixels: Seq[Pixel])
 
 object Row {
-  def fromString(s: String) = Row(s map {
-    case '#' => Darkness
-    case '-' => Star()
-    case _ => throw new RuntimeException("UFO!")
-  })
+  def fromString(s: String) =
+    Row(s map {
+      case '#' => Darkness
+      case '-' => Star()
+      case _   => throw new RuntimeException("UFO!")
+    })
 
 }
 
 final case class StarWithLocation(star: Star, row: Int, col: Int)
 
-
 final case class NightSky(w: Int, h: Int, rows: Seq[Row]) {
 
   val allStars: Seq[StarWithLocation] =
     for {
-      (row, ridx) <- rows.zipWithIndex
+      (row, ridx)  <- rows.zipWithIndex
       (star, cidx) <- row.pixels.zipWithIndex if star.isInstanceOf[Star]
     } yield {
       StarWithLocation(star.asInstanceOf[Star], ridx, cidx)
     }
 
   def starAt(x: Int, y: Int): Option[Star] = rows(y).pixels(x) match {
-    case Darkness => None
-    case s@Star(id) => Some(s)
+    case Darkness     => None
+    case s @ Star(id) => Some(s)
   }
 
   def identifyStar(x: Int, y: Int, id: Int): Unit = starAt(x, y).foreach(_.id = Some(id))
 
-  override def toString: String = this.rows.map(_.pixels.map {
-    case Darkness => "#"
-    case Star(id) => id.fold("-")(_.toString)
-  }.mkString).mkString("\n")
+  override def toString: String =
+    this.rows
+      .map(_.pixels.map {
+        case Darkness => "#"
+        case Star(id) => id.fold("-")(_.toString)
+      }.mkString)
+      .mkString("\n")
 
 }
-
 
 object StarCounting {
 
   type StarCount = Int
 
-  def main(args: Array[String]): Unit = {
+  def main(args: Array[String]): Unit =
     args.headOption.foreach { file =>
       readImages(scala.io.Source.fromFile(file).getLines.toList).map(solver).zipWithIndex.foreach {
         case (starCount, index) => println(s"Case ${index + 1}: $starCount")
       }
     }
-  }
 
   def readImages(lines: => List[String]): Seq[NightSky] = {
     val DimensionsPattern = """^(\d+) (\d+)$""".r

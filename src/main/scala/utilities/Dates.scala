@@ -10,28 +10,28 @@ object Dates extends App {
   def datesInYear(year: Year): Seq[LocalDate] = (1 to year.length()).map(year.atDay)
 
   val skMonthName: Month => String = {
-    case JANUARY => "JANUÁR"
-    case FEBRUARY => "FEBRUÁR"
-    case MARCH => "MAREC"
-    case APRIL => "APRÍL"
-    case MAY => "MÁJ"
-    case JUNE => "JÚN"
-    case JULY => "JÚL"
-    case AUGUST => "AUGUST"
+    case JANUARY   => "JANUÁR"
+    case FEBRUARY  => "FEBRUÁR"
+    case MARCH     => "MAREC"
+    case APRIL     => "APRÍL"
+    case MAY       => "MÁJ"
+    case JUNE      => "JÚN"
+    case JULY      => "JÚL"
+    case AUGUST    => "AUGUST"
     case SEPTEMBER => "SEPTEMBER"
-    case OCTOBER => "OKTÓBER"
-    case NOVEMBER => "NOVEMBER"
-    case DECEMBER => "DECEMBER"
+    case OCTOBER   => "OKTÓBER"
+    case NOVEMBER  => "NOVEMBER"
+    case DECEMBER  => "DECEMBER"
   }
 
   val skDayOfWeek: DayOfWeek => String = {
-    case MONDAY => "Po"
-    case TUESDAY => "Ut"
+    case MONDAY    => "Po"
+    case TUESDAY   => "Ut"
     case WEDNESDAY => "St"
-    case THURSDAY => "Št"
-    case FRIDAY => "Pi"
-    case SATURDAY => "So"
-    case SUNDAY => "Ne"
+    case THURSDAY  => "Št"
+    case FRIDAY    => "Pi"
+    case SATURDAY  => "So"
+    case SUNDAY    => "Ne"
   }
 
   datesInYear(Year.of(2019)).foreach { d =>

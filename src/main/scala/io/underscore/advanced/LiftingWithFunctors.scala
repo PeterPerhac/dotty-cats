@@ -11,7 +11,6 @@ object LiftingWithFunctors {
     println(lifted(Option(1)))
     foo()
   }
-//TODO FIX cats 1.0
   def foo() = {
     import cats.instances.function._
     import cats.syntax.functor._

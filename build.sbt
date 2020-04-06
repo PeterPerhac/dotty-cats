@@ -18,6 +18,11 @@ libraryDependencies += "com.typesafe.play" % "play-json_2.13" % "2.8.1"
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.1.1"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1"
 
+libraryDependencies += "org.reactivemongo" %% "reactivemongo" % "0.20.3"
+
+libraryDependencies += "org.slf4j" % "slf4j-api"    % "1.7.30"
+libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.7.30"
+
 libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.8.0"
 
 libraryDependencies += "io.monix" %% "monix" % "3.1.0"

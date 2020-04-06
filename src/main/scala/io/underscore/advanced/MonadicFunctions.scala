@@ -13,8 +13,6 @@ object MonadicFunctions {
 //      b <- (_: String) * 2
 //      c <- (_: String).trim.reverse
 //    } yield a + a2 + b + c
-//TODO fix cat 1.0
-//    println(addStuff(" 10 "))
   }
 
 }

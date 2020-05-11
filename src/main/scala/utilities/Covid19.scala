@@ -99,7 +99,7 @@ object Covid19 extends App {
     "CHN" /*  China */, "CZE" /*	Czechia */, "DEU" /*	Germany */, "ESP" /*	Spain */, "FRA" /*	France */,
     "GBR" /*	United Kingdom */, "GRC" /*	Greece */, "HRV" /*	Croatia */, "HUN" /*	Hungary */, "IND" /*  India */,
     "IRL" /*	Ireland */, "ITA" /*	Italy */, "NLD" /*	Netherlands */, "POL" /*	Poland */, "RUS" /*	Russia */,
-    "SVK" /*	Slovakia */, "USA" /*  United States of America */
+    "SVK" /*	Slovakia */, "SWE" /* Sweden */, "USA" /*  United States of America */
   ).contains
   // format: on
 
@@ -113,6 +113,7 @@ object Covid19 extends App {
       "Canada",
       "Italy",
       "Ireland",
+      "Sweden",
       "Switzerland"
     ).contains(c.name)
 
@@ -150,9 +151,7 @@ object Covid19 extends App {
         )
     }
 
-    import cats.instances.future._
-    import cats.instances.vector._
-    import cats.syntax.foldable._
+    import cats.implicits._
 
     def mongoArchivingAction: Future[String] =
       collection

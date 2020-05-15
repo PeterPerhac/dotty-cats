@@ -29,7 +29,7 @@ object Fractals extends App {
   val randomPoint: Int => (Point, Int) = prevIdx => {
     val rIdx = LazyList
       .unfold(prevIdx) { last =>
-        val res = Random.nextInt(5);
+        val res = Random.nextInt(5)
         condOpt(res) { case n if last == prevIdx => n -> n }
       }
       .last
@@ -38,7 +38,7 @@ object Fractals extends App {
 
   val partWay: Double => Point => Point => Point =
     d => start => end => start.add(start.to(end).times(d))
-  val halfWay: Point => Point => Point = partWay(0.5)
+  val halfWay: Point => Point => Point = partWay(0.58)
 
   val points = LazyList.unfold((star(0), 0)) {
     case (p, vIdx) =>
@@ -81,7 +81,7 @@ object Fractals extends App {
              |    var paper = Raphael("canvas", $W, $W);
              |    paper.canvas.style.backgroundColor = '#000';
              |    var pixel = function(x,y,c){
-             |      paper.rect(x,y,1,1).attr({"stroke": "none", "fill": this.paper.raphael.rgb(0,c,0)});
+             |      paper.rect(x,y,1,1).attr({"stroke": "none", "fill": this.paper.raphael.rgb(120, 255, 255)});
              |    }
              |
              |   ${pixels.mkString("\n")}

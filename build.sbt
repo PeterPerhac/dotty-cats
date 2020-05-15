@@ -23,6 +23,8 @@ libraryDependencies += "org.reactivemongo" %% "reactivemongo" % "0.20.3"
 libraryDependencies += "org.slf4j" % "slf4j-api"    % "1.7.30"
 libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.7.30"
 
+libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "2.1.1"
+
 libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.8.0"
 
 libraryDependencies += "io.monix" %% "monix" % "3.1.0"

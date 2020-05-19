@@ -1,6 +1,7 @@
 package gui
 
 import java.awt.Color
+import java.awt.Color.getHSBColor
 import java.awt.geom.Rectangle2D
 import java.awt.image.BufferedImage
 
@@ -14,33 +15,28 @@ case class Vector(x: Double, y: Double) {
 case class Point(x: Int, y: Int) {
   def to(p2: Point): Vector = Vector(p2.x - this.x, p2.y - this.y)
   def +(v: Vector): Point = Point(this.x + v.x.toInt, this.y + v.y.toInt)
-  def toPixel(c: Color): Pixel = Pixel(this, c)
-}
-case class Pixel(p: Point, color: Color) {
-
-  def withinBounds(maxX: Int, maxY: Int): Boolean =
-    p.x >= 0 && p.x < maxX && p.y >= 0 && p.y < maxY
-
-  val x: Int = p.x
-  val y: Int = p.y
+  def withinBounds(maxX: Int, maxY: Int): Boolean = x >= 0 && x < maxX && y >= 0 && y < maxY
 }
 
 object Fractals extends SimpleSwingApplication {
 
-  private val A = 1024
-  private val R = A / 4
+  val A: Int = 1024
+  val R: Int = A / 4
 
   class DataPanel(frame: MainFrame) extends Panel {
 
     val canvas = new BufferedImage(A, A, BufferedImage.TYPE_INT_RGB)
 
-    private var polyPointCount: Int = 3
-    private var doBlackout: Boolean = true
-    private var distance: Double = 0.50
-    private var pixelCount: Int = 50000
-    private var restrictPointChoice: Boolean = false
+    var polyPointCount: Int = 3
+    var doClear: Boolean = true
+    var distance: Double = 0.50
+    var pixelCount: Int = 50000
+    var restrictPointChoice: Boolean = false
+    var hue: Float = 0.3f
+    var color: Int = _
+    def newColor(): Unit = color = getHSBColor(hue, 1.0f, 1.0f).getRGB
 
-    private var polygon: Array[Point] = newPolygon(polyPointCount)
+    var polygon: Array[Point] = newPolygon(polyPointCount)
 
     def newPolygon(nSides: Int): Array[Point] = {
       import math._
@@ -52,22 +48,20 @@ object Fractals extends SimpleSwingApplication {
       }
     }
 
-    val partWay: Double => Point => Point => Point =
-      d => start => end => start + (start.to(end) * d)
-
     def updateTitle(): Unit =
       frame.title = s"$polyPointCount-sided polygon. " +
         f"distance = $distance%.2f, " +
         s"points = $pixelCount ${if (restrictPointChoice) ", restricted choice of points" else ""}"
 
     def doRefresh(): Unit = {
-      if (doBlackout) {
+      if (doClear) {
         val g = canvas.createGraphics()
         g.setBackground(Color.BLACK)
         g.setColor(Color.BLACK)
         g.fill(new Rectangle2D.Float(0f, 0f, A.toFloat, A.toFloat))
         g.dispose()
       }
+      newColor()
       plotPoints()
       updateTitle()
       this.repaint()
@@ -85,61 +79,60 @@ object Fractals extends SimpleSwingApplication {
         distance = distance - 0.005d
         doRefresh()
       case KeyPressed(_, Key.S, _, _) =>
-        pixelCount = pixelCount + 100
+        pixelCount = pixelCount + 500
         doRefresh()
       case KeyPressed(_, Key.X, _, _) =>
-        pixelCount = pixelCount - 100
-        doRefresh()
+        if (pixelCount > 500) {
+          pixelCount = pixelCount - 500
+          doRefresh()
+        }
       case KeyPressed(_, Key.Space, _, _) =>
-        doBlackout = !doBlackout
-        if (doBlackout) doRefresh() else updateTitle()
+        doClear = !doClear
+        if (doClear) doRefresh() else updateTitle()
       case KeyPressed(_, Key.R, _, _) =>
         restrictPointChoice = !restrictPointChoice
+        doRefresh()
+      case KeyPressed(_, Key.H, _, _) =>
+        hue = hue + 0.01f
         doRefresh()
       case KeyPressed(_, Key.A, _, _) =>
         polyPointCount = polyPointCount + 1
         polygon = newPolygon(polyPointCount)
-        if (doBlackout) doRefresh() else updateTitle()
+        if (doClear) doRefresh() else updateTitle()
       case KeyPressed(_, Key.Z, _, _) =>
         if (polyPointCount > 3) {
           polyPointCount = polyPointCount - 1
           polygon = newPolygon(polyPointCount)
-          if (doBlackout) doRefresh() else updateTitle()
+          if (doClear) doRefresh() else updateTitle()
         }
       case KeyPressed(_, Key.Q, _, _) =>
         System.exit(0)
     }
 
-    val randomPoint: Int => (Point, Int) =
-      prevIdx => {
-        def randomVertexIndex(): Int = Random.nextInt(polygon.length)
-        if (restrictPointChoice) {
-          var newIdx = randomVertexIndex()
-          while (newIdx == prevIdx) {
-            newIdx = randomVertexIndex()
-          }
-          polygon(newIdx) -> newIdx
-        } else {
-          (polygon(prevIdx), randomVertexIndex())
-        }
+    def randomVertex(prevIdx: Int): Int = {
+      def randomVertexIndex(): Int = Random.nextInt(polygon.length)
+      var newIdx = randomVertexIndex()
+      if (restrictPointChoice) {
+        while (newIdx == prevIdx) newIdx = randomVertexIndex()
       }
+      newIdx
+    }
 
-    def plotPoints(): Unit =
+    def plotPoints(): Unit = {
+      def partWay(start: Point, end: Point, d: Double): Point = start + (start.to(end) * d)
       LazyList
         .unfold((polygon(0), 0)) {
           case (p, vIdx) =>
-            val (nextPoint, idx) = randomPoint(vIdx)
-            val halfWayPoint = partWay(distance)(p)(nextPoint)
+            val idx = randomVertex(vIdx)
+            val halfWayPoint = partWay(p, polygon(idx), distance)
             Some((halfWayPoint, halfWayPoint -> idx))
         }
-        .map(_.toPixel(Color.getHSBColor(0.3f, 1.0f, 1.0f)))
         .slice(1, pixelCount + 1) //discard annoying first pixel
-        .foreach(pixel => if (pixel.withinBounds(A, A)) { canvas.setRGB(pixel.x, pixel.y, pixel.color.getRGB) })
-
-    override def paintComponent(g: Graphics2D): Unit = {
-      plotPoints()
-      g.drawImage(canvas, null, null)
+        .foreach(pixel => if (pixel.withinBounds(A, A)) { canvas.setRGB(pixel.x, pixel.y, color) })
     }
+
+    override def paintComponent(g: Graphics2D): Unit =
+      g.drawImage(canvas, null, null)
 
   }
 
@@ -147,6 +140,8 @@ object Fractals extends SimpleSwingApplication {
     contents = new DataPanel(this) {
       preferredSize = new Dimension(A, A)
       updateTitle()
+      newColor()
+      plotPoints()
     }
   }
 }

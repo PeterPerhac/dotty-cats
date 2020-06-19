@@ -40,11 +40,11 @@ object CovidDataLine {
 
   implicit val format: Reads[CovidDataLine] = (
     (__ \ "dateRep").read[LocalDate](customLocalDateReads) and
-      (__ \ "cases").read[String].map(_.toInt) and
-      (__ \ "deaths").read[String].map(_.toInt) and
+      (__ \ "cases").read[Int] and
+      (__ \ "deaths").read[Int] and
       (__ \ "countriesAndTerritories").read[String].map(_.replaceAll("_", " ")) and
       (__ \ "countryterritoryCode").read[String] and
-      (__ \ "popData2018").read[String].map(s => Option(s).filter(_.nonEmpty).flatMap(nes => Try(nes.toLong).toOption))
+      (__ \ "popData2019").read[String].map(s => Option(s).filter(_.nonEmpty).flatMap(nes => Try(nes.toLong).toOption))
   )(CovidDataLine.apply _)
 
 }
@@ -109,6 +109,7 @@ object Covid19 extends App {
       "United Kingdom",
       "Spain",
       "Germany",
+      "Croatia",
       "United States of America",
       "Canada",
       "Italy",
@@ -183,7 +184,7 @@ object Covid19 extends App {
 
   } finally {
     in.close()
-    Files.delete(tempFilePath)
+    //Files.delete(tempFilePath)
     if (mongoEnabled) {
       Await.result(db.flatMap(_ => connection.map(_.close()(1.second))).flatMap(_ => driver.close(1.second)), 1.second)
     }

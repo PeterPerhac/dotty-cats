@@ -22,7 +22,7 @@ case class CovidDataLine(
       cases: Int,
       deaths: Int,
       country: String,
-      countryCode: String,
+      countryCode: Option[String],
       population: Option[Long]
 ) {
   def cumulativeStats: CumulativeStats = CumulativeStats(date, cases, cases, deaths, deaths)
@@ -43,8 +43,8 @@ object CovidDataLine {
       (__ \ "cases").read[Int] and
       (__ \ "deaths").read[Int] and
       (__ \ "countriesAndTerritories").read[String].map(_.replaceAll("_", " ")) and
-      (__ \ "countryterritoryCode").read[String] and
-      (__ \ "popData2019").read[String].map(s => Option(s).filter(_.nonEmpty).flatMap(nes => Try(nes.toLong).toOption))
+      (__ \ "countryterritoryCode").readNullable[String] and
+      (__ \ "popData2019").readNullable[Long]
   )(CovidDataLine.apply _)
 
 }
@@ -129,7 +129,7 @@ object Covid19 extends App {
         .parse(Files.newInputStream(tempFilePath))
         .as[Vector[CovidDataLine]]((__ \ "records").read)
         .filter(l =>
-          countryFilter(l.countryCode) && (l.date.isAfter(LocalDate.of(2020, 3, 1)) || l.cases > 0 || l.deaths > 0))
+          countryFilter(l.countryCode.getOrElse("N/A")) && (l.date.isAfter(LocalDate.of(2020, 3, 1)) || l.cases > 0 || l.deaths > 0))
         .sortBy(entry => (entry.country, entry.date.toEpochDay))
         .groupBy(_.country)
 

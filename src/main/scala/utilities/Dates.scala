@@ -34,7 +34,7 @@ object Dates extends App {
     case SUNDAY    => "Ne"
   }
 
-  datesInYear(Year.of(2019)).foreach { d =>
+  datesInYear(Year.of(2021)).foreach { d =>
     val dayOfWeek = d.getDayOfWeek
 
     val formattedString = s"${d.format(formatter)} (${skDayOfWeek(d.getDayOfWeek)})"
@@ -48,7 +48,7 @@ object Dates extends App {
     println(formattedString)
 
     if (dayOfWeek == SUNDAY) {
-      println("~~~~~")
+      println()
       println()
     }
   }

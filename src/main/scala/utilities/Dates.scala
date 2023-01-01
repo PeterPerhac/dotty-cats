@@ -1,3 +1,5 @@
+import java.io.PrintWriter
+import java.nio.charset.StandardCharsets
 import java.time.format.DateTimeFormatter
 import java.time.{DayOfWeek, LocalDate, Month, Year}
 import java.time.DayOfWeek._
@@ -34,23 +36,31 @@ object Dates extends App {
     case SUNDAY    => "Ne"
   }
 
-  datesInYear(Year.of(2021)).foreach { d =>
-    val dayOfWeek = d.getDayOfWeek
+  (2023 to 2050).foreach { yr =>
 
-    val formattedString = s"${d.format(formatter)} (${skDayOfWeek(d.getDayOfWeek)})"
+    val pw: PrintWriter = new PrintWriter(s"$yr.md", StandardCharsets.UTF_8)
+    try {
+      datesInYear(Year.of(yr)).foreach { d =>
+        val dayOfWeek = d.getDayOfWeek
 
-    if (d.getDayOfMonth == 1) {
-      println()
-      println(s"**${skMonthName(d.getMonth)}**")
-      println()
+        val formattedString = s"${d.format(formatter)} (${skDayOfWeek(d.getDayOfWeek)})"
+
+        if (d.getDayOfMonth == 1) {
+          pw.println()
+          pw.println(s"**${skMonthName(d.getMonth)}**")
+          pw.println()
+        }
+
+        pw.println(formattedString)
+
+        if (dayOfWeek == SUNDAY) {
+          pw.println()
+          pw.println()
+        }
+      }
     }
-
-    println(formattedString)
-
-    if (dayOfWeek == SUNDAY) {
-      println()
-      println()
+    finally {
+      pw.close()
     }
   }
-
 }
